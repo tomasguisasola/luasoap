@@ -86,10 +86,15 @@ as Lua 5.0.
 <a name=version>
 <h2>Current version</h2>
 <p>
-Current version is 1.0 alpha.
+Current version is 1.0 beta.
 It was developed for Lua 5.0 based on
 <a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>.
 </p>
+<p>
+Version 1.0 follows the
+<a href="http://www.keplerproject.org/compat">package proposal</a>
+for Lua 5.1
+(see section <a href="#installation">Installation</a> for more details).
 
 
 <a name=download>
@@ -98,8 +103,8 @@ It was developed for Lua 5.0 based on
 LuaSOAP can be downloaded in source code from the following links: <p>
 
 <blockquote>
-<a href="luasoap-1.0a.tar.gz">luasoap-1.0a.tar.gz</a><br>
-<a href="luasoap-1.0a.zip">luasoap-1.0a.zip</a>
+<a href="luasoap-1.0b.tar.gz">luasoap-1.0b.tar.gz</a><br>
+<a href="luasoap-1.0b.zip">luasoap-1.0b.zip</a>
 </blockquote><p>
 
 
@@ -107,6 +112,7 @@ LuaSOAP can be downloaded in source code from the following links: <p>
 <h2>What's new</h2>
 <p>
 <ul>
+  <li>[?/?/2004] Version 1.0 beta released
   <li>[4/apr/2004] Version 1.0 alpha released
 </ul>
 </p>
@@ -119,12 +125,20 @@ LuaSOAP can be downloaded in source code from the following links: <p>
 LuaSOAP is a Lua library composed by two files:
 <code>soap.lua</code> and <code>http.lua</code>.
 Both must be copied to a directory named <code>soap</code>
-created in your <code>LUA_PATH</code>.
-That way one could use <code>require "soap/soap"</code> to load
-the module.
-Other simple way to make it work is to add a rule like
-<code>.../?/?.lua...</code> in your <code>LUA_PATH</code>.
-This way one could use just <code>require "soap"</code>.
+created somewhere in your <code>LUA_PATH</code>.
+</p>
+<p>
+LuaSOAP follows the
+<a href="http://www.keplerproject.org/compat">package proposal</a>
+for Lua 5.1,
+therefore this package should be "installed".
+In other words,
+if you are using Lua 5.0,
+the files <tt>compat-5.1.c</tt> and <tt>compat-5.1.h</tt> must be used
+in the compilation and the file <tt>compat-5.1.lua</tt> must be installed
+in the <tt>LUA_PATH</tt>.
+If you are using Lua 5.1,
+nothing should be done.
 </p>
 
 
@@ -170,7 +184,7 @@ Comments are welcome!
 
 <hr>
 <small>
-$Id: index.html,v 1.5 2004/07/09 16:24:28 tomas Exp $
+$Id: index.html,v 1.6 2004/11/03 14:10:49 tomas Exp $
 </small>
 
 </body>
