@@ -1,15 +1,14 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: soap.lua,v 1.1 2004/03/16 16:42:22 tomas Exp $
+-- $Id: soap.lua,v 1.2 2004/03/22 14:41:15 tomas Exp $
 ---------------------------------------------------------------------
 
-local print = print
 require"dom"
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
 local getn, tconcat, tinsert, tremove = table.getn, table.concat, table.insert, table.remove
-local format, strfind, strlen = string.format, string.find, string.len
+local format, strfind = string.format, string.find
 local max = math.max
 local parse = dom.parse
 
@@ -31,8 +30,7 @@ local serialize
 ---------------------------------------------------------------------
 local function attrs (a)
 	if not a then
-		return ""
-		--return "--no attrs--"
+		return "" -- no attributes
 	else
 		local c = {}
 		if a[1] then
@@ -107,7 +105,7 @@ local header_template = {
 	tag = "SOAP-ENV:Header",
 }
 local function insert_header (obj, header)
-	-- remove old header
+	-- removes old header
 	if obj[2] then
 		tremove (obj, 1)
 	end
@@ -126,8 +124,8 @@ local envelope_template = {
 	{
 		tag = "SOAP-ENV:Body",
 		[1] = {
-			tag = nil, -- must be completed
-			attr = {}, -- must be completed
+			tag = nil, -- must be filled
+			attr = {}, -- must be filled
 		},
 	}
 }
@@ -177,6 +175,5 @@ function decode (doc)
 	for i, el in ipairs (obj[1]) do
 		entries[i] = el
 	end
-print(doc)
 	return namespace, method, entries
 end

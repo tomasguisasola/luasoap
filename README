@@ -1,0 +1,17 @@
+LuaSOAP is a library of functions to deal with SOAP
+
+This library depends on LuaExpat.
+
+Here goes a small description of the files in the distribution
+
+    index.html       -- Home page
+    license.html     -- Copyright & License
+    luasoap.png      -- LuaSOAP Logo
+    Makefile         -- Makefile for Unix systems
+    manual.html      -- Reference manual
+    README           -- This file
+    test.lua         -- Overall API test script
+    soap.lua         -- Source file
+    soap.http.lua    -- Extension library over HTTP
+
+$Id: README,v 1.1 2004/03/22 14:41:15 tomas Exp $

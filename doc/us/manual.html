@@ -1,0 +1,214 @@
+<! See Copyright Notice in license.html>
+<html>
+
+<head>
+<title>LuaSOAP: SOAP interface to the Lua programming language</title>
+<style type="text/css">
+ul { list-style-type: disc };
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<hr>
+
+<center>
+<table border=0 cellspacing=2 cellpadding=2>
+<tr><td align=center><a href="http://www.keplerproject.org/luaxmlrpc">
+<img border=0 alt="LuaSOAP logo" src="luaxmlrpc.png"></a>
+<tr><td align=center><big><b>LuaSOAP Reference Manual</b></big>
+<tr><td align=center valign=top>SOAP interface to the
+<a href="http://www.lua.org">Lua</a>
+programming language
+</table>
+</center>
+<p>
+
+<center><small>
+<a href="index.html">home</a> &middot;
+<a href="#introduction">introduction</a> &middot;
+<a href="#soap_elements">soap elements</a> &middot;
+<a href="#basic">basic</a> &middot;
+<a href="#client">client</a> &middot;
+<a href="#examples">examples</a> &middot;
+<a href="#related_docs">related docs</a>
+</small></center>
+<p>
+
+<hr>
+
+<a name="introduction"></a>
+<h2>Introduction</h2>
+
+<p>
+LuaSOAP is a <a href="http://www.lua.org">Lua</a> library to ease the use of
+<a href="http://">SOAP</a>.
+It enables a Lua program to:
+<ul>
+  <li> Encode and decode SOAP messages
+	without having to deal directly with XML code
+</ul>
+
+<p>
+LuaSOAP provides a very simple API and an abstraction layer over XML
+avoiding manipulation of string representation of data structures.
+<p>
+LuaSOAP is based on
+<a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>
+and on
+<a href="http://www.lua.org">Lua 5.0</a>.<br>
+
+The abstraction layer over HTTP depends on
+<a href="http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.<br>
+
+
+<a name="soap_elements"></a>
+<h2>SOAP elements</h2>
+<p>
+SOAP elements are always represented by Lua tables
+except strings.
+A SOAP element is a table of the form used by LuaExpat's
+!!!! DOM !!!! .
+The table has the following characteristics:
+<ul>
+  <li>a special field called <code>tag</code> with the element's name; 
+  <li>a special optional field called <code>attr</code> with the element's attributes (see next section);
+  <li>the element's children are stored at the <em>array-part</em>
+of the table.  A child could be an ordinary string or SOAP element
+(a Lua table following these same rules).
+</ul>
+
+<h4>Attributes</h4>
+<p>
+The special field <code>attr</code> is a Lua table that stores the
+SOAP element's attributes as pairs <em>&lt;key&gt;=&lt;value&gt;</em>.
+To assure an order (if necessary),
+the sequence of <em>key</em>s should be placed at the <em>array-part</em>
+of the table.
+
+
+<a name="basic"></a>
+<h2>Basic support</h2>
+<p>
+The file <code>soap.lua</code> implements all basic support for encoding
+and decoding SOAP messages.
+There are two functions:
+<ul>
+  <a name="encode"></a>
+  <li> <b><code>encode (namespace, element_name, entries, headers*) => envelope</code></b> <br>
+    Builds a SOAP document containing a <code>SOAP-Envelope</code> element.
+    It receives two strings with the namespace (an URI) and the SOAP-element's
+    name and, as the third argument, a table with zero or more
+    <a href="soap_elements">SOAP elements</a>.
+    An optional fourth argument can be used to generate the SOAP Header
+    (it must be a <a href="soap_elements">SOAP element</a> too).
+    The result is a string containing the SOAP document.
+
+  <a name="decode"></a>
+  <li> <b><code>decode (method_response) => namespace, element_name, elements</code></b> <br>
+    Disassembles a SOAP document into Lua objects.
+    It receives a string containing the SOAP document.
+    The result are the namespace (string), the SOAP-element's name (string)
+    and a table with the contents of the SOAP Body.
+    Each element of this table can be a string or a
+    <a href="soap_elements">SOAP element</a>.
+
+</ul>
+
+<a name="client"></a>
+<h2>Client side</h2>
+<p>
+The file <code>soap.http.lua</code> implements a simple stand-alone client
+based on <a href="http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.
+The following function is provided:
+<ul>
+  <a name="call"></a>
+  <li> <b><code>call (url, namespace, element_name, entries, headers*)</code></b> <br>
+  It encapsulates the call of <code>encode</code> and <code>decode</code>
+  over a connection to an HTTP server.
+  The result is the same as
+  <a href="#decode">decode</a>
+  function: the namespace (string), the SOAP-element's name (string)
+  and a table with the contents of the SOAP Body.
+</ul>
+
+
+<a name="examples"></a>
+<h2>Examples</h2>
+
+<a name="client_example"></a>
+<h3>Client example</h3>
+
+Below is a small sample code displaying the use of the library
+in a client application.
+
+<blockquote>
+<pre>require "soap.http"
+local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp", "http://simon.fell.com/calc", "doubler", {
+		{
+			tag = "nums",
+			attr = {
+				["xmlns:SOAP-ENC"] = "http://schemas.xmlsoap.org/soap/encoding/",
+				["SOAP-ENC:arrayType"] = "xsd:int[5]",
+			},
+			{ tag = "number", 10 },
+			{ tag = "number", 20 },
+			{ tag = "number", 30 },
+			{ tag = "number", 50 },
+			{ tag = "number", 100 },
+		},
+	})
+print("namespace = ", ns, "element name = ", meth)
+for i, elem in ipairs (ent[1]) do print (elem[1]) end
+</pre>
+</blockquote>
+
+
+<a name="related_docs"></a>
+<h2>Related documentation</h2>
+
+Here is a list of related documentation:
+<ul>
+  <li> <a href="http://www.w3.org/TR/2003/REC-soap12-part0-20030624/">http://www.w3.org/TR/2003/REC-soap12-part0-20030624/</a>
+</ul>
+
+
+<a name="contents"></a>
+<h2>Contents</h2>
+<p>
+<ul>
+<li> <a href="#introduction">Introduction</a>
+<li> <a href="#soap_elements">SOAP elements</a>
+<li> <a href="#basic">Basic support</a>
+  <ul>
+    <li> <a href="#encode">encode</a>
+    <li> <a href="#decode">decode</a>
+  </ul>
+<li> <a href="#client">Client side</a>
+  <ul>
+    <li> <a href="#call">call</a>
+  </ul>
+<li> <a href="#examples">Examples</a>
+<li> <a href="#related_docs">Related documentation</a>
+</ul>
+</p>
+
+
+<center><small>
+<a href="index.html">home</a> &middot;
+<a href="#introduction">introduction</a> &middot;
+<a href="#soap_elements">soap elements</a> &middot;
+<a href="#basic">basic</a> &middot;
+<a href="#client">client</a> &middot;
+<a href="#examples">examples</a> &middot;
+<a href="#related_docs">related docs</a>
+</small></center>
+<p>
+
+<hr>
+<small>
+$Id: manual.html,v 1.1 2004/03/22 14:41:15 tomas Exp $
+</small>
+
+</body>
+</html> 
