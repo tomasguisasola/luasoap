@@ -11,7 +11,7 @@ SRCS= README Makefile \
 
 dist: dist_dir
 	tar -czf $(TAR_FILE) $(DIST_DIR)
-	zip -lq $(ZIP_FILE) $(DIST_DIR)/*
+	zip -rq $(ZIP_FILE) $(DIST_DIR)/*
 	rm -rf $(DIST_DIR)
 
 dist_dir:
