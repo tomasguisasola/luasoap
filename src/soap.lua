@@ -1,20 +1,20 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: soap.lua,v 1.4 2004/11/03 12:49:47 tomas Exp $
+-- $Id: soap.lua,v 1.5 2004/11/03 13:29:51 tomas Exp $
 ---------------------------------------------------------------------
 
-require"lxp/lom"
+require"lxp.lom"
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
 local getn, tconcat, tinsert, tremove = table.getn, table.concat, table.insert, table.remove
 local format, strfind = string.format, string.find
 local max = math.max
-local parse = lom.parse
+local parse = lxp.lom.parse
 
 module (arg and arg[1])
 
-_COPYRIGHT = "Copyright (C) 2003-2004 Kepler Project"
+_COPYRIGHT = "Copyright (C) 2004 Kepler Project"
 _DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
 _NAME = "LuaSOAP"
 _VERSION = "1.0b"
