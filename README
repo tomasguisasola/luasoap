@@ -12,6 +12,6 @@ Here goes a small description of the files in the distribution
     README           -- This file
     test.lua         -- Overall API test script
     soap.lua         -- Source file
-    soap.http.lua    -- Extension library over HTTP
+    http.lua         -- Extension library over HTTP
 
-$Id: README,v 1.1 2004/03/22 14:41:15 tomas Exp $
+$Id: README,v 1.2 2004/04/02 15:51:38 tomas Exp $
