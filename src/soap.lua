@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: soap.lua,v 1.3 2004/03/24 19:27:38 tomas Exp $
+-- $Id: soap.lua,v 1.4 2004/11/03 12:49:47 tomas Exp $
 ---------------------------------------------------------------------
 
 require"lxp/lom"
@@ -12,14 +12,12 @@ local format, strfind = string.format, string.find
 local max = math.max
 local parse = lom.parse
 
-local Public = {}
-setmetatable (Public, {__index = function (t, n)
-	error ("undeclared variable "..n, 2)
-end })
+module (arg and arg[1])
 
-soap = Public
-
-setfenv (1, Public)
+_COPYRIGHT = "Copyright (C) 2003-2004 Kepler Project"
+_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
+_NAME = "LuaSOAP"
+_VERSION = "1.0b"
 
 local serialize
 
