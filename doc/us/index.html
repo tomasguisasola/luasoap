@@ -1,191 +1,180 @@
-<! See Copyright Notice in license.html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
-
 <head>
-<title>LuaSOAP: SOAP interface to the Lua programming language</title>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<title>LuaSOAP: SOAP interface to the Lua programming
+language</title>
 <style type="text/css">
 ul { list-style-type: disc };
 </style>
 </head>
-
 <body bgcolor="#FFFFFF">
-
 <hr>
-
 <center>
-<table border=0 cellspacing=2 cellpadding=2>
-<tr><td align=center><a href="http://www.keplerproject.org/luasoap">
-<img border=0 alt="LuaSOAP logo" src="luasoap.png"></a>
-<tr><td align=center><big><b>LuaSOAP</b></big>
-<tr><td align=center valign=top>SOAP interface to the
-<a href="http://www.lua.org">Lua</a>
-programming language
+<table border="0" cellspacing="2" cellpadding="2">
+<tr>
+<td align="center"><a href=
+"http://www.keplerproject.org/luasoap"><img border="0" alt=
+"LuaSOAP logo" src="luasoap.png"></a> </td>
+</tr>
+
+<tr>
+<td align="center"><big><b>LuaSOAP</b></big> </td>
+</tr>
+
+<tr>
+<td align="center" valign="top">SOAP interface to the <a href=
+"http://www.lua.org">Lua</a> programming language</td>
+</tr>
 </table>
 </center>
-<p>
 
-<center><small>
-<a href=#over>overview</a> &middot;
-<a href=#version>current version</a> &middot;
-<a href=#download>download</a> &middot;
-<a href=#new>news</a> &middot;
-<a href=#installation>installation</a> &middot;
-<a href="manual.html">manual</a> &middot;
-<a href="license.html">license</a> &middot;
-<a href="#credits">credits</a> &middot;
-<a href="#contact">contact us</a>
-</small></center>
-<p>
+<center><small><a href="#over">overview</a> &middot; <a href=
+"#version">current version</a> &middot; <a href=
+"#download">download</a> &middot; <a href="#new">news</a> &middot;
+<a href="#installation">installation</a> &middot; <a href=
+"manual.html">manual</a> &middot; <a href=
+"license.html">license</a> &middot; <a href="#credits">credits</a>
+&middot; <a href="#contact">contact us</a></small></center>
 
 <hr>
-
 <h2>Contents</h2>
-<p>
+
 <ul>
-<li> <a href=#over>Overview</a>
-<li> <a href=#version>Current Version</a>
-<li> <a href=#download>Download</a>
-<li> <a href=#new>What's new</a>
-<li> <a href=#installation>Installation</a>
-<li> <a href="manual.html">User's manual</a>
-    <ul>
-    <li> <a href="manual.html#introduction">Introduction</a>
-    <li> <a href="manual.html#soap_elements">SOAP elements</a>
-    <li> <a href="manual.html#basic">Basic support</a>
-      <ul>
-        <li> <a href="manual.html#encode">encode</a>
-        <li> <a href="manual.html#decode">decode</a>
-      </ul>
-    <li> <a href="manual.html#client">Client side</a>
-      <ul>
-        <li> <a href="manual.html#call">call</a>
-      </ul>
-    <li> <a href="manual.html#examples">Examples</a>
-    <li> <a href="manual.html#related_docs">Related documentation</a>
-    </ul>
-<li> <a href="#credits">Credits</a>
-<li> <a href="#contact">Contact us</a>
+<li><a href="#over">Overview</a></li>
+
+<li><a href="#version">Current Version</a></li>
+
+<li><a href="#download">Download</a></li>
+
+<li><a href="#new">What's new</a></li>
+
+<li><a href="#installation">Installation</a></li>
+
+<li><a href="manual.html">User's manual</a> 
+
+<ul>
+<li><a href="manual.html#introduction">Introduction</a></li>
+
+<li><a href="manual.html#soap_elements">SOAP elements</a></li>
+
+<li><a href="manual.html#basic">Basic support</a> 
+
+<ul>
+<li><a href="manual.html#encode">encode</a></li>
+
+<li><a href="manual.html#decode">decode</a></li>
 </ul>
-</p>
+</li>
 
+<li><a href="manual.html#client">Client side</a> 
 
-<a name=over>
+<ul>
+<li><a href="manual.html#call">call</a></li>
+</ul>
+</li>
+
+<li><a href="manual.html#examples">Examples</a></li>
+
+<li><a href="manual.html#related_docs">Related
+documentation</a></li>
+</ul>
+</li>
+
+<li><a href="#credits">Credits</a></li>
+
+<li><a href="#contact">Contact us</a></li>
+</ul>
+
+<br>
+<br>
+ 
+
 <h2>Overview</h2>
-<p>
-LuaSOAP is a library to ease the use of
-<a href="http://">SOAP</a>.
-LuaSOAP provides a very simple API that convert Lua tables to and from
-XML documents.
-<p>
-LuaSOAP is free software and uses the same
-<a href="license.html">license</a>
-as Lua 5.0.
-</p>
 
+<p>LuaSOAP is a library to ease the use of <a href=
+"http://">SOAP</a>. LuaSOAP provides a very simple API that convert
+Lua tables to and from XML documents.</p>
 
-<a name=version>
+<p>LuaSOAP is free software and uses the same <a href=
+"license.html">license</a> as Lua 5.0.</p>
+
 <h2>Current version</h2>
-<p>
-Current version is 1.0 beta.
-It was developed for Lua 5.0 based on
-<a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>.
-</p>
-<p>
-Version 1.0 follows the
-<a href="http://www.keplerproject.org/compat">package proposal</a>
-for Lua 5.1
-(see section <a href="#installation">Installation</a> for more details).
 
+<p>Current version is 1.0 beta. It was developed for Lua 5.0 based
+on <a href=
+"http://www.keplerproject.org/luaexpat">LuaExpat</a>.</p>
 
-<a name=download>
+<p>Version 1.0 follows the <a href=
+"http://www.keplerproject.org/compat">package proposal</a> for Lua
+5.1 (see section <a href="#installation">Installation</a> for more
+details).</p>
+
 <h2>Download</h2>
 
-LuaSOAP can be downloaded in source code from the following links: <p>
+LuaSOAP can be downloaded in source code from the following links: 
 
-<blockquote>
-<a href="luasoap-1.0b.tar.gz">luasoap-1.0b.tar.gz</a><br>
-<a href="luasoap-1.0b.zip">luasoap-1.0b.zip</a>
-</blockquote><p>
+<blockquote><a href=
+"luasoap-1.0b.tar.gz">luasoap-1.0b.tar.gz</a><br>
+<a href="luasoap-1.0b.zip">luasoap-1.0b.zip</a></blockquote>
 
-
-<a name=new>
 <h2>What's new</h2>
-<p>
+
 <ul>
-  <li>[?/?/2004] Version 1.0 beta released
-  <li>[4/apr/2004] Version 1.0 alpha released
+<li>[?/?/2004] Version 1.0 beta released</li>
+
+<li>[4/apr/2004] Version 1.0 alpha released</li>
 </ul>
-</p>
 
+<br>
+<br>
+ <a name="installation"></a> 
 
-<a name="installation"></a>
 <h2>Installation</h2>
 
-<p>
-LuaSOAP is a Lua library composed by two files:
-<code>soap.lua</code> and <code>http.lua</code>.
-Both must be copied to a directory named <code>soap</code>
-created somewhere in your <code>LUA_PATH</code>.
-</p>
-<p>
-LuaSOAP follows the
-<a href="http://www.keplerproject.org/compat">package proposal</a>
-for Lua 5.1,
-therefore this package should be "installed".
-In other words,
-if you are using Lua 5.0,
-the files <tt>compat-5.1.c</tt> and <tt>compat-5.1.h</tt> must be used
-in the compilation and the file <tt>compat-5.1.lua</tt> must be installed
-in the <tt>LUA_PATH</tt>.
-If you are using Lua 5.1,
-nothing should be done.
-</p>
+<p>LuaSOAP is a Lua library composed by two files:
+<code>soap.lua</code> and <code>http.lua</code>. Both must be
+copied to a directory named <code>soap</code> created somewhere in
+your <code>LUA_PATH</code>.</p>
 
+<p>LuaSOAP follows the <a href=
+"http://www.keplerproject.org/compat">package proposal</a> for Lua
+5.1, therefore this package should be "installed". In other words,
+if you are using Lua 5.0, the files <tt>compat-5.1.c</tt> and
+<tt>compat-5.1.h</tt> must be used in the compilation and the file
+<tt>compat-5.1.lua</tt> must be installed in the <tt>LUA_PATH</tt>.
+If you are using Lua 5.1, nothing should be done.</p>
 
-<a name="credits">
 <h2>Credits</h2>
 
-<p>
-LuaSOAP was designed by Roberto Ierusalimschy, Andr&eacute; Carregal
-and Tom&aacute;s Guisasola as part of
-<a href="http://www.keplerproject.org">The Kepler Project</a>
-which holds its copyright.
-It was implemented by Tom&aacute;s Guisasola.
-</p>
-<p>
-LuaSOAP development was sponsored by 
-<a href="http://www.fabricadigital.com.br">Fábrica Digital</a>
-and FINEP.
-</p>
+<p>LuaSOAP was designed by Roberto Ierusalimschy, Andr&eacute;
+Carregal and Tom&aacute;s Guisasola as part of <a href=
+"http://www.keplerproject.org">The Kepler Project</a> which holds
+its copyright. It was implemented by Tom&aacute;s Guisasola.</p>
 
+<p>LuaSOAP development was sponsored by <a href=
+"http://www.fabricadigital.com.br">F&aacute;brica Digital</a> and
+FINEP.</p>
 
-<a name="contact"></a>
+<a name="contact"></a> 
+
 <h2>Contact us</h2>
 
-<p>
-For more information please
-<a href="mailto:info-NO-SPAM-THANKS@keplerproject.org">contact us</a>.
-Comments are welcome!
-</p>
+<p>For more information please <a href=
+"mailto:info-NO-SPAM-THANKS@keplerproject.org">contact us</a>.
+Comments are welcome!</p>
 
-<p>
-<center><small>
-<a href=#over>overview</a> &middot;
-<a href=#version>current version</a> &middot;
-<a href=#download>download</a> &middot;
-<a href=#new>news</a> &middot;
-<a href=#installation>installation</a> &middot;
-<a href="manual.html">manual</a> &middot;
-<a href="license.html">license</a> &middot;
-<a href="#credits">credits</a> &middot;
-<a href="#contact">contact us</a>
-</small></center>
-<p>
+<center><small><a href="#over">overview</a> &middot; <a href=
+"#version">current version</a> &middot; <a href=
+"#download">download</a> &middot; <a href="#new">news</a> &middot;
+<a href="#installation">installation</a> &middot; <a href=
+"manual.html">manual</a> &middot; <a href=
+"license.html">license</a> &middot; <a href="#credits">credits</a>
+&middot; <a href="#contact">contact us</a></small></center>
 
 <hr>
-<small>
-$Id: index.html,v 1.7 2004/11/11 13:35:49 tomas Exp $
-</small>
-
+<small>$Id: index.html,v 1.7 2004/11/11 13:35:49 tomas Exp
+$</small>
 </body>
-</html> 
+</html>
+
