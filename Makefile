@@ -23,4 +23,4 @@ install:
 	cp $(LUAS) $(LUA_DIR)/soap
 
 clean:
-	rm $(TAR_FILE) $(ZIP_FILE)
+	rm -f $(TAR_FILE) $(ZIP_FILE)
