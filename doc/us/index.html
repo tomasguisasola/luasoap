@@ -29,67 +29,52 @@ ul { list-style-type: disc };
 </table>
 </center>
 
-<center><small><a href="#over">overview</a> &middot; <a href=
-"#version">current version</a> &middot; <a href=
-"#download">download</a> &middot; <a href="#new">news</a> &middot;
-<a href="#installation">installation</a> &middot; <a href=
-"manual.html">manual</a> &middot; <a href=
-"license.html">license</a> &middot; <a href="#credits">credits</a>
-&middot; <a href="#contact">contact us</a></small></center>
+<center><small>
+<a href="#over">overview</a> &middot;
+<a href="#version">current version</a> &middot;
+<a href="#download">download</a> &middot;
+<a href="#new">news</a> &middot;
+<a href="#installation">installation</a> &middot;
+<a href="manual.html">manual</a> &middot;
+<a href="license.html">license</a> &middot;
+<a href="#credits">credits</a> &middot;
+<a href="#contact">contact us</a>
+</small></center>
 
 <hr>
 <h2>Contents</h2>
 
 <ul>
-<li><a href="#over">Overview</a></li>
-
-<li><a href="#version">Current Version</a></li>
-
-<li><a href="#download">Download</a></li>
-
-<li><a href="#new">What's new</a></li>
-
-<li><a href="#installation">Installation</a></li>
-
-<li><a href="manual.html">User's manual</a> 
-
-<ul>
-<li><a href="manual.html#introduction">Introduction</a></li>
-
-<li><a href="manual.html#soap_elements">SOAP elements</a></li>
-
-<li><a href="manual.html#basic">Basic support</a> 
-
-<ul>
-<li><a href="manual.html#encode">encode</a></li>
-
-<li><a href="manual.html#decode">decode</a></li>
-</ul>
-</li>
-
-<li><a href="manual.html#client">Client side</a> 
-
-<ul>
-<li><a href="manual.html#call">call</a></li>
-</ul>
-</li>
-
-<li><a href="manual.html#examples">Examples</a></li>
-
-<li><a href="manual.html#related_docs">Related
-documentation</a></li>
-</ul>
-</li>
-
-<li><a href="#credits">Credits</a></li>
-
-<li><a href="#contact">Contact us</a></li>
+  <li><a href="#over">Overview</a></li>
+  <li><a href="#version">Current Version</a></li>
+  <li><a href="#download">Download</a></li>
+  <li><a href="#new">What's new</a></li>
+  <li><a href="#installation">Installation</a></li>
+  <li><a href="manual.html">User's manual</a> 
+    <ul>
+      <li><a href="manual.html#introduction">Introduction</a></li>
+      <li><a href="manual.html#soap_elements">SOAP elements</a></li>
+      <li><a href="manual.html#basic">Basic support</a> 
+        <ul>
+          <li><a href="manual.html#encode">encode</a></li>
+          <li><a href="manual.html#decode">decode</a></li>
+        </ul>
+      </li>
+      <li><a href="manual.html#client">Client side</a> 
+        <ul>
+          <li><a href="manual.html#call">call</a></li>
+        </ul>
+      </li>
+      <li><a href="manual.html#examples">Examples</a></li>
+      <li><a href="manual.html#related_docs">Related documentation</a></li>
+    </ul>
+  </li>
+  <li><a href="#credits">Credits</a></li>
+  <li><a href="#contact">Contact us</a></li>
 </ul>
 
-<br>
-<br>
- 
 
+<a name="over"></a>
 <h2>Overview</h2>
 
 <p>LuaSOAP is a library to ease the use of <a href=
@@ -102,34 +87,28 @@ Lua tables to and from XML documents.</p>
 <h2>Current version</h2>
 
 <p>Current version is 1.0 beta. It was developed for Lua 5.0 based
-on <a href=
-"http://www.keplerproject.org/luaexpat">LuaExpat</a>.</p>
+on <a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>.</p>
 
-<p>Version 1.0 follows the <a href=
-"http://www.keplerproject.org/compat">package proposal</a> for Lua
-5.1 (see section <a href="#installation">Installation</a> for more
-details).</p>
-
+<a name="download"></a>
 <h2>Download</h2>
 
-LuaSOAP can be downloaded in source code from the following links: 
+LuaSOAP can be downloaded in source code from its
+<a href="http://luaforge.net/project/showfiles.php?group_id=15">LuaForge</a> page.
 
-<blockquote><a href=
-"luasoap-1.0b.tar.gz">luasoap-1.0b.tar.gz</a><br>
-<a href="luasoap-1.0b.zip">luasoap-1.0b.zip</a></blockquote>
-
+<a name="new"></a>
 <h2>What's new</h2>
 
 <ul>
-<li>[?/?/2004] Version 1.0 beta released</li>
-
-<li>[4/apr/2004] Version 1.0 alpha released</li>
+<li>[2/Dec/2004] Version 1.0 beta released</li>
+<li>[4/Apr/2004] Version 1.0 alpha released</li>
 </ul>
 
-<br>
-<br>
- <a name="installation"></a> 
+<p>Version 1.0 beta follows the
+<a href="http://www.keplerproject.org/compat">package proposal</a>
+for Lua 5.1 (see section <a href="#installation">Installation</a>
+for more details).</p>
 
+<a name="installation"></a> 
 <h2>Installation</h2>
 
 <p>LuaSOAP is a Lua library composed by two files:
@@ -145,6 +124,7 @@ if you are using Lua 5.0, the files <tt>compat-5.1.c</tt> and
 <tt>compat-5.1.lua</tt> must be installed in the <tt>LUA_PATH</tt>.
 If you are using Lua 5.1, nothing should be done.</p>
 
+<a name="credits"></a>
 <h2>Credits</h2>
 
 <p>LuaSOAP was designed by Roberto Ierusalimschy, Andr&eacute;
@@ -157,7 +137,6 @@ its copyright. It was implemented by Tom&aacute;s Guisasola.</p>
 FINEP.</p>
 
 <a name="contact"></a> 
-
 <h2>Contact us</h2>
 
 <p>For more information please <a href=
@@ -173,7 +152,7 @@ Comments are welcome!</p>
 &middot; <a href="#contact">contact us</a></small></center>
 
 <hr>
-<small>$Id: index.html,v 1.9 2004/12/02 15:02:55 tomas Exp $</small>
+<small>$Id: index.html,v 1.10 2004/12/02 15:13:02 tomas Exp $</small>
 </body>
 </html>
 
