@@ -1,7 +1,11 @@
 #!/usr/local/bin/lua
+---------------------------------------------------------------------
+-- LuaSOAP test file.
+-- $Id: test.lua,v 1.2 2004/03/16 16:42:22 tomas Exp $
+---------------------------------------------------------------------
 
 require"dom" -- Este nome deve mudar, ne'?
-require"luasoap"
+require"soap"
 
 function table.equal (t1, t2)
 	assert (type(t1) == type(t2), string.format ("%s (%s) ~= %s (%s)", type(t1),

@@ -1,15 +1,17 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: luasoap.lua,v 1.1 2004/03/09 10:19:20 tomas Exp $
+-- $Id: soap.lua,v 1.1 2004/03/16 16:42:22 tomas Exp $
 ---------------------------------------------------------------------
 
 local print = print
+require"dom"
 
-local assert, ipairs, pairs, type = assert, ipairs, pairs, type
+local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
 local getn, tconcat, tinsert, tremove = table.getn, table.concat, table.insert, table.remove
-local format, strlen = string.format, string.len
+local format, strfind, strlen = string.format, string.find, string.len
 local max = math.max
+local parse = dom.parse
 
 local Public = {}
 setmetatable (Public, {__index = function (t, n)
@@ -42,11 +44,11 @@ local function attrs (a)
 				tinsert (c, format ("%s=%q", i, v))
 			end
 		end
-		local attrs = tconcat (c, " ")
-		if strlen (attrs) > 0 then
-			attrs = " "..attrs
+		if getn (c) > 0 then
+			return " "..tconcat (c, " ")
+		else
+			return ""
 		end
-		return attrs
 	end
 end
 
@@ -86,6 +88,18 @@ serialize = function (obj)
 end
 
 ---------------------------------------------------------------------
+-- @param attr Table of object's attributes.
+-- @return String with the value of the namespace ("xmlns") field.
+---------------------------------------------------------------------
+local function find_xmlns (attr)
+	for a, v in pairs (attr) do
+		if strfind (a, "xmlns", 1, 1) then
+			return v
+		end
+	end
+end
+
+---------------------------------------------------------------------
 -- Add header element (if it exists) to object.
 -- Cleans old header element anyway.
 ---------------------------------------------------------------------
@@ -103,10 +117,6 @@ local function insert_header (obj, header)
 	end
 end
 
----------------------------------------------------------------------
--- Converts a LuaExpat table into a SOAP message.
--- @param namespace String with the namespace of the elements.
----------------------------------------------------------------------
 local envelope_template = {
 	tag = "SOAP-ENV:Envelope",
 	attr = { "xmlns:SOAP-ENV", "SOAP-ENV:encodingStyle",
@@ -121,6 +131,15 @@ local envelope_template = {
 		},
 	}
 }
+
+---------------------------------------------------------------------
+-- Converts a LuaExpat table into a SOAP message.
+-- @param namespace String with the namespace of the elements.
+-- @param method String with the method's name.
+-- @param entries Table of SOAP elements (LuaExpat's format).
+-- @param header Table describing the header of the SOAP-ENV (optional).
+-- @return String with SOAP-ENV element.
+---------------------------------------------------------------------
 function encode (namespace, method, entries, header)
 	-- Cleans old header and insert a new one (if it exists).
 	insert_header (envelope_template, header)
@@ -136,12 +155,16 @@ function encode (namespace, method, entries, header)
 end
 
 ---------------------------------------------------------------------
---
+-- Converts a SOAP message into Lua objects.
+-- @param doc String with SOAP document.
+-- @return String with namespace, String with method's name and
+--	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
 function decode (doc)
-	local obj = assert (dom.parse (doc))
+	local obj = assert (parse (doc))
 	assert (obj.tag == "SOAP-ENV:Envelope", "Not a SOAP Envelope: "..
 		tostring(obj.tag))
+	local namespace = find_xmlns (obj.attr)
 	if obj[1].tag == "SOAP-ENV:Body" then
 		obj = obj[1]
 	elseif obj[2].tag == "SOAP-ENV:Body" then
@@ -149,7 +172,11 @@ function decode (doc)
 	else
 		error ("Couldn't find SOAP Body!")
 	end
-	local namespace = find_xmlns (obj.attr)
-	local method = obj.tag
-	return namespace, method, obj[1] -- ?????????????????
+	local _, _, method = strfind (obj[1].tag, "^.*:(.*)$")
+	local entries = {}
+	for i, el in ipairs (obj[1]) do
+		entries[i] = el
+	end
+print(doc)
+	return namespace, method, entries
 end
