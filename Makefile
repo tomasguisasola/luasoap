@@ -1,9 +1,9 @@
+LUA_DIR= /usr/local/share/lua/5.0
 VERSION= 1.0a
 PKG= luasoap-$(VERSION)
 DIST_DIR= $(PKG)
 TAR_FILE= $(PKG).tar.gz
 ZIP_FILE= $(PKG).zip
-LIBS= /usr/local/lua/soap/
 LUAS= soap.lua http.lua
 SRCS= README Makefile \
 	$(LUAS) test.lua \
@@ -19,8 +19,8 @@ dist_dir:
 	cp $(SRCS) $(DIST_DIR)
 
 install:
-	mkdir -p $(LIBS)
-	cp $(LUAS) $(LIBS)
+	mkdir -p $(LUA_DIR)/soap
+	cp $(LUAS) $(LUA_DIR)/soap
 
 clean:
 	rm $(TAR_FILE) $(ZIP_FILE)
