@@ -1,5 +1,5 @@
 LUA_DIR= /usr/local/share/lua/5.0
-VERSION= 1.0a
+VERSION= 1.0b
 PKG= luasoap-$(VERSION)
 DIST_DIR= $(PKG)
 TAR_FILE= $(PKG).tar.gz
