@@ -1,16 +1,16 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: soap.lua,v 1.2 2004/03/22 14:41:15 tomas Exp $
+-- $Id: soap.lua,v 1.3 2004/03/24 19:27:38 tomas Exp $
 ---------------------------------------------------------------------
 
-require"dom"
+require"lxp/lom"
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
 local getn, tconcat, tinsert, tremove = table.getn, table.concat, table.insert, table.remove
 local format, strfind = string.format, string.find
 local max = math.max
-local parse = dom.parse
+local parse = lom.parse
 
 local Public = {}
 setmetatable (Public, {__index = function (t, n)

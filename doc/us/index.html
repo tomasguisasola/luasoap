@@ -87,6 +87,8 @@ as Lua 5.0.
 <h2>Current version</h2>
 <p>
 Current version is 1.0 alpha.
+It was developed for Lua 5.0 based on
+<a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>.
 </p>
 
 
@@ -114,8 +116,15 @@ LuaSOAP can be downloaded in source code from the following links: <p>
 <h2>Installation</h2>
 
 <p>
-LuaSOAP is a Lua library so the installation is very simple:
-just copy the Lua files to a directory in your <tt>LUA_PATH</tt>.
+LuaSOAP is a Lua library composed by two files:
+<code>soap.lua</code> and <code>http.lua</code>.
+Both must be copied to a directory named <code>soap</code>
+created in your <code>LUA_PATH</code>.
+That way one could use <code>require "soap/soap"</code> to load
+the module.
+Other simple way to make it work is to add a rule like
+<code>.../?/?.lua...</code> in your <code>LUA_PATH</code>.
+This way one could use just <code>require "soap"</code>.
 </p>
 
 
@@ -162,7 +171,7 @@ Comments are welcome!
 
 <hr>
 <small>
-$Id: index.html,v 1.1 2004/03/22 14:41:15 tomas Exp $
+$Id: index.html,v 1.2 2004/03/24 19:27:38 tomas Exp $
 </small>
 
 </body>

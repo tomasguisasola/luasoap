@@ -67,8 +67,11 @@ The abstraction layer over HTTP depends on
 <p>
 SOAP elements are always represented by Lua tables
 except strings.
-A SOAP element is a table of the form used by LuaExpat's
-!!!! DOM !!!! .
+A SOAP element is a table of the form defined by the
+<a href="http://www.keplerproject.org/luaexpat/lom.html">Lua Object Model</a>
+from the
+<a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>
+library.
 The table has the following characteristics:
 <ul>
   <li>a special field called <code>tag</code> with the element's name; 
@@ -143,7 +146,7 @@ Below is a small sample code displaying the use of the library
 in a client application.
 
 <blockquote>
-<pre>require "soap.http"
+<pre>require "soap/http"
 local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp", "http://simon.fell.com/calc", "doubler", {
 		{
 			tag = "nums",
@@ -207,7 +210,7 @@ Here is a list of related documentation:
 
 <hr>
 <small>
-$Id: manual.html,v 1.1 2004/03/22 14:41:15 tomas Exp $
+$Id: manual.html,v 1.2 2004/03/24 19:27:38 tomas Exp $
 </small>
 
 </body>

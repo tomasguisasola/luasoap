@@ -1,5 +1,5 @@
 #!/usr/local/bin/lua
--- $Id: test-http.lua,v 1.1 2004/03/16 16:42:22 tomas Exp $
+-- $Id: test-http.lua,v 1.2 2004/03/24 19:27:38 tomas Exp $
 
 function table._tostring (tab, indent, spacing)
 	local s = {}
@@ -36,7 +36,7 @@ end
 
 
 require"soap"
-require"soap.http"
+require"soap/http"
 
 local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp",
 	"http://simon.fell.com/calc", "doubler", {
