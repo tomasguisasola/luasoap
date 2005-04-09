@@ -1,13 +1,13 @@
 LUA_DIR= /usr/local/share/lua/5.0
-VERSION= 1.0b
+VERSION= 1.0.0
 PKG= luasoap-$(VERSION)
 DIST_DIR= $(PKG)
 TAR_FILE= $(PKG).tar.gz
 ZIP_FILE= $(PKG).zip
-LUAS= soap.lua http.lua
+LUAS= src/soap.lua src/http.lua
 SRCS= README Makefile \
-	$(LUAS) test.lua \
-	index.html manual.html license.html luasoap.png
+	$(LUAS) tests/test.lua \
+	doc/us/index.html doc/us/manual.html doc/us/license.html doc/us/luasoap.png
 
 dist: dist_dir
 	tar -czf $(TAR_FILE) $(DIST_DIR)
