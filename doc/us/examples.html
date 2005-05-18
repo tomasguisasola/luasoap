@@ -23,7 +23,7 @@
 <div id="navigation">
 <h1>LuaSOAP</h1>
 	<ul>
-		<li><strong>Home</strong>
+		<li><a href="index.html">Home</a>
 			<ul>
 				<li><a href="index.html#overview">Overview</a></li>
 				<li><a href="index.html#status">Status</a></li>
@@ -52,66 +52,43 @@
 				<li><a href="manual.html#references">References</a></li>
 			</ul>
 		</li>
-		<li><a href="examples.html">Examples</a></li>
+		<li><strong>Examples</strong></li>
 		<li><a href="license.html">License</a></li>
 	</ul>
 </div> <!-- id="navigation" -->
 
 <div id="content">
 
-<h2><a name="overview"></a>Overview</h2>
 
-<p>LuaSOAP is a library to ease the use of <a href="http://">SOAP</a>.
-LuaSOAP provides a very simple API that convert
-Lua tables to and from XML documents.</p>
+<h2><a name="examples"></a>Examples</h2>
 
-<p>LuaSOAP is free software and uses the same <a href="license.html">license</a> as Lua 5.0.</p>
+<a name="client_example"></a> 
 
+<h3>Client example</h3>
 
-<h2><a name="status"></a>Status</h2>
+Below is a small sample code displaying the use of the library in a
+client application. 
 
-<p>Current version is 1.0 beta. It was developed for Lua 5.0 based
-on <a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>.</p>
-
-
-<h2><a name="download"></a>Download</h2>
-
-<p>
-LuaSOAP can be downloaded in source code from its
-<a href="http://luaforge.net/project/showfiles.php?group_id=15">LuaForge</a> page.
-</p>
-
-
-<h2><a name="history"></a>History</h2>
-
-<ul>
-<li>[2/Dec/2004] Version 1.0 beta released</li>
-<li>[4/Apr/2004] Version 1.0 alpha released</li>
-</ul>
-
-<p>Version 1.0 beta follows the
-<a href="http://www.keplerproject.org/compat">package proposal</a>
-for Lua 5.1 (see section <a href="manual.html#installation">Installation</a>
-for more details).</p>
-
-
-<h2><a name="credits"></a>Credits</h2>
-
-<p>LuaSOAP was designed by Roberto Ierusalimschy, Andr&eacute;
-Carregal and Tom&aacute;s Guisasola as part of the
-<a href="http://www.keplerproject.org">Kepler Project</a>
-which holds its copyright. It was implemented by Tom&aacute;s Guisasola.</p>
-
-<p>LuaSOAP development was sponsored by <a href=
-"http://www.fabricadigital.com.br">F&aacute;brica Digital</a> and
-FINEP.</p>
-
-
-<h2><a name="contact"></a>Contact us</h2>
-
-<p>For more information please <a href=
-"mailto:info-NO-SPAM-THANKS@keplerproject.org">contact us</a>.
-Comments are welcome!</p>
+<pre class="example">
+require "soap.http"
+local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp", 
+	"http://simon.fell.com/calc", "doubler", {
+        {
+            tag = "nums",
+            attr = {
+                ["xmlns:SOAP-ENC"] = "http://schemas.xmlsoap.org/soap/encoding/",
+                ["SOAP-ENC:arrayType"] = "xsd:int[5]",
+            },
+            { tag = "number", 10 },
+            { tag = "number", 20 },
+            { tag = "number", 30 },
+            { tag = "number", 50 },
+            { tag = "number", 100 },
+        },
+    })
+print("namespace = ", ns, "element name = ", meth)
+for i, elem in ipairs (ent[1]) do print (elem[1]) end
+</pre>
 
 </div> <!-- id="content" -->
 
@@ -120,7 +97,7 @@ Comments are welcome!</p>
 <div id="about">
 	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
 	<p><small>
-	$Id: index.html,v 1.12 2005/05/18 18:37:24 uid20006 Exp $
+	$Id: examples.html,v 1.1 2005/05/18 18:37:24 uid20006 Exp $
 	</small></p>
 </div> <!-- id="about" -->
 

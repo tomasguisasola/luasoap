@@ -1,45 +1,66 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<meta name="generator" content="HTML Tidy, see www.w3.org">
-<title>LuaSOAP: SOAP interface to the Lua programming
-language</title>
-<style type="text/css">
-ul { list-style-type: disc };
-</style>
+	<title>LuaSOAP: SOAP interface to the Lua programming language</title>
+    <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
-<body bgcolor="#FFFFFF">
-<hr>
-<center>
-<table border="0" cellspacing="2" cellpadding="2">
-<tr>
-<td align="center"><a href=
-"http://www.keplerproject.org/luaxmlrpc"><img border="0" alt=
-"LuaSOAP logo" src="luasoap.png"></a> </td>
-</tr>
+<body>
 
-<tr>
-<td align="center"><big><b>LuaSOAP Reference Manual</b></big> </td>
-</tr>
+<div id="container">
+	
+<div id="product">
+	<div id="product_logo"><a href="http://www.keplerproject.org">
+		<img alt="LuaSOAP logo" src="luasoap.png"/>
+	</a></div>
+	<div id="product_name"><big><b>LuaSOAP</b></big></div>
+	<div id="product_description">SOAP interface for the Lua programming language</div>
+</div> <!-- id="product" -->
 
-<tr>
-<td align="center" valign="top">SOAP interface to the <a href=
-"http://www.lua.org">Lua</a> programming language</td>
-</tr>
-</table>
-</center>
+<div id="main">
+	
+<div id="navigation">
+<h1>LuaSOAP</h1>
+	<ul>
+		<li><a href="index.html">Home</a>
+			<ul>
+				<li><a href="index.html#overview">Overview</a></li>
+				<li><a href="index.html#status">Status</a></li>
+				<li><a href="index.html#download">Download</a></li>
+				<li><a href="index.html#history">History</a></li>
+				<li><a href="index.html#credits">Credits</a></li>
+				<li><a href="index.html#contact">Contact us</a></li>
+			</ul>
+		</li>
+		<li><strong>Manual</strong>
+			<ul>
+				<li><a href="manual.html#introduction">Introduction</a></li>
+				<li><a href="manual.html#installation">Installation</a></li>
+				<li><a href="manual.html#soap_elements">SOAP elements</a></li>
+				<li><a href="manual.html#basic">Basic support</a> 
+					<ul>
+						<li><a href="manual.html#encode">encode</a></li>
+						<li><a href="manual.html#decode">decode</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#client">Client side</a> 
+					<ul>
+						<li><a href="manual.html#call">call</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#references">References</a></li>
+			</ul>
+		</li>
+		<li><a href="examples.html">Examples</a></li>
+		<li><a href="license.html">License</a></li>
+	</ul>
+</div> <!-- id="navigation" -->
 
-<center><small><a href="index.html">home</a> &middot; <a href=
-"#introduction">introduction</a> &middot; <a href=
-"#soap_elements">soap elements</a> &middot; <a href=
-"#basic">basic</a> &middot; <a href="#client">client</a> &middot;
-<a href="#examples">examples</a> &middot; <a href=
-"#related_docs">related docs</a></small></center>
+<div id="content">
 
-<hr>
-<a name="introduction"></a> 
 
-<h2>Introduction</h2>
+<h2><a name="introduction"></a>Introduction</h2>
 
 <p>LuaSOAP is a <a href="http://www.lua.org">Lua</a> library to
 ease the use of <a href=
@@ -55,14 +76,29 @@ with XML code</li>
 XML avoiding manipulation of string representation of data
 structures.</p>
 
-<p>LuaSOAP is based on <a href=
-"http://www.keplerproject.org/luaexpat">LuaExpat</a> and on <a
-href="http://www.lua.org">Lua 5.0</a>.<br>
- The abstraction layer over HTTP depends on <a href=
-"http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.<br>
- <a name="soap_elements"></a></p>
+<p>LuaSOAP is based on <a href="http://www.keplerproject.org/luaexpat">LuaExpat</a> and on 
+<a href="http://www.lua.org">Lua 5.0</a>.
+The abstraction layer over HTTP depends on 
+<a href="http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.
+</p>
 
-<h2>SOAP elements</h2>
+<h2><a name="installation"></a>Installation</h2>
+
+<p>LuaSOAP is a Lua library composed by two files:
+<code>soap.lua</code> and <code>http.lua</code>. Both must be
+copied to a directory named <code>soap</code> created somewhere in
+your <code>LUA_PATH</code>.</p>
+
+<p>LuaSOAP follows the <a href=
+"http://www.keplerproject.org/compat">package proposal</a> for Lua
+5.1, therefore this package should be "installed". In other words,
+if you are using Lua 5.0, the files <tt>compat-5.1.c</tt> and
+<tt>compat-5.1.h</tt> must be used in the compilation and the file
+<tt>compat-5.1.lua</tt> must be installed in the <tt>LUA_PATH</tt>.
+If you are using Lua 5.1, nothing should be done.</p>
+
+
+<h2><a name="soap_elements"></a>SOAP elements</h2>
 
 <p>SOAP elements are always represented by Lua tables except
 strings. A SOAP element is a table of the form defined by the <a
@@ -89,9 +125,9 @@ Lua table following these same rules).</li>
 the SOAP element's attributes as pairs
 <em>&lt;key&gt;=&lt;value&gt;</em>. To assure an order (if
 necessary), the sequence of <em>key</em>s should be placed at the
-<em>array-part</em> of the table. <a name="basic"></a></p>
+<em>array-part</em> of the table.</p>
 
-<h2>Basic support</h2>
+<h2><a name="basic"></a>Basic support</h2>
 
 <p>The file <code>soap.lua</code> implements all basic support for
 encoding and decoding SOAP messages. There are two functions:</p>
@@ -119,9 +155,8 @@ contents of the SOAP Body. Each element of this table can be a
 string or a <a href="#soap_elements">SOAP element</a>.</li>
 </ul>
 
-<a name="client"></a> 
 
-<h2>Client side</h2>
+<h2><a name="client"></a>Client side</h2>
 
 <p>The file <code>soap.http.lua</code> implements a simple
 stand-alone client based on <a href=
@@ -140,42 +175,8 @@ is the same as <a href="#decode">decode</a> function: the namespace
 contents of the SOAP Body.</li>
 </ul>
 
-<a name="examples"></a> 
 
-<h2>Examples</h2>
-
-<a name="client_example"></a> 
-
-<h3>Client example</h3>
-
-Below is a small sample code displaying the use of the library in a
-client application. 
-
-<blockquote>
-<pre>
-require "soap/http"
-local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp", "http://simon.fell.com/calc", "doubler", {
-        {
-            tag = "nums",
-            attr = {
-                ["xmlns:SOAP-ENC"] = "http://schemas.xmlsoap.org/soap/encoding/",
-                ["SOAP-ENC:arrayType"] = "xsd:int[5]",
-            },
-            { tag = "number", 10 },
-            { tag = "number", 20 },
-            { tag = "number", 30 },
-            { tag = "number", 50 },
-            { tag = "number", 100 },
-        },
-    })
-print("namespace = ", ns, "element name = ", meth)
-for i, elem in ipairs (ent[1]) do print (elem[1]) end
-</pre>
-</blockquote>
-
-<a name="related_docs"></a> 
-
-<h2>Related documentation</h2>
+<h2><a name="references"></a>References</h2>
 
 Here is a list of related documentation: 
 
@@ -184,49 +185,18 @@ Here is a list of related documentation:
 "http://www.w3.org/TR/2003/REC-soap12-part0-20030624/">http://www.w3.org/TR/2003/REC-soap12-part0-20030624/</a></li>
 </ul>
 
-<a name="contents"></a> 
+</div> <!-- id="content" -->
 
-<h2>Contents</h2>
+</div> <!-- id="main" -->
 
-<ul>
-<li><a href="#introduction">Introduction</a></li>
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+	<p><small>
+	$Id: manual.html,v 1.6 2005/05/18 18:37:24 uid20006 Exp $
+	</small></p>
+</div> <!-- id="about" -->
 
-<li><a href="#soap_elements">SOAP elements</a></li>
+</div> <!-- id="container" -->
 
-<li><a href="#basic">Basic support</a> 
-
-<ul>
-<li><a href="#encode">encode</a></li>
-
-<li><a href="#decode">decode</a></li>
-</ul>
-</li>
-
-<li><a href="#client">Client side</a> 
-
-<ul>
-<li><a href="#call">call</a></li>
-</ul>
-</li>
-
-<li><a href="#examples">Examples</a></li>
-
-<li><a href="#related_docs">Related documentation</a></li>
-</ul>
-
-<br>
-<br>
- 
-
-<center><small><a href="index.html">home</a> &middot; <a href=
-"#introduction">introduction</a> &middot; <a href=
-"#soap_elements">soap elements</a> &middot; <a href=
-"#basic">basic</a> &middot; <a href="#client">client</a> &middot;
-<a href="#examples">examples</a> &middot; <a href=
-"#related_docs">related docs</a></small></center>
-
-<hr>
-<small>$Id: manual.html,v 1.5 2004/12/02 15:02:55 tomas Exp $</small>
 </body>
-</html>
-
+</html> 
