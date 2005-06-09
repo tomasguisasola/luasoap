@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- SOAP over HTTP.
 -- See Copyright notice in license.html
--- $Id: http.lua,v 1.2 2005/06/09 21:07:47 mascarenhas Exp $
+-- $Id: http.lua,v 1.3 2005/06/09 21:08:16 mascarenhas Exp $
 ---------------------------------------------------------------------
 
 require"socket.http"
@@ -20,7 +20,6 @@ module("soap.http")
 function call (url, namespace, method, entries, headers)
         local request_sink, tbody = ltn12.sink.table()
 	local request_body = soap.encode(namespace, method, entries, headers)
-	print(request_body)
 	local err, code, headers, status = request {
 		url = url,
 		method = "POST",
