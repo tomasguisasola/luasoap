@@ -1,10 +1,10 @@
 #!/usr/local/bin/lua
 ---------------------------------------------------------------------
 -- LuaSOAP test file.
--- $Id: test.lua,v 1.3 2004/03/24 19:27:38 tomas Exp $
+-- $Id: test.lua,v 1.4 2005/06/09 21:15:22 mascarenhas Exp $
 ---------------------------------------------------------------------
 
-require"lxp/lom"
+require"lxp.lom"
 require"soap"
 
 function table.equal (t1, t2)
@@ -190,8 +190,8 @@ local tests = {
 for i, t in ipairs(tests) do
 	local s = soap.encode (t.namespace, t.method, t.entries, t.header)
 	s = string.gsub (s, "[\n\r\t]", "")
-	local ds = assert (lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..s))
+	local ds = assert (lxp.lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..s))
 	t.xml = string.gsub (t.xml, "[\n\r\t]", "")
-	local dx = assert (lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml))
+	local dx = assert (lxp.lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml))
 	print (table.equal (ds, dx))
 end
