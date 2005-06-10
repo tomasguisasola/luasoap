@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- SOAP over HTTP.
 -- See Copyright notice in license.html
--- $Id: http.lua,v 1.3 2005/06/09 21:08:16 mascarenhas Exp $
+-- $Id: http.lua,v 1.4 2005/06/10 00:34:27 tomas Exp $
 ---------------------------------------------------------------------
 
 require"socket.http"
@@ -15,10 +15,15 @@ module("soap.http")
 ---------------------------------------------------------------------
 -- Call a remote method.
 -- @param url String with the location of the server.
--- @param namespace
+-- @param namespace String with the namespace of the elements.
+-- @param method String with the method's name.
+-- @param entries Table of SOAP elements (LuaExpat's format).
+-- @param header Table describing the header of the SOAP-ENV (optional).
+-- @return String with namespace, String with method's name and
+--	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
 function call (url, namespace, method, entries, headers)
-        local request_sink, tbody = ltn12.sink.table()
+	local request_sink, tbody = ltn12.sink.table()
 	local request_body = soap.encode(namespace, method, entries, headers)
 	local err, code, headers, status = request {
 		url = url,
