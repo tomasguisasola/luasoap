@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: soap.lua,v 1.6 2005/04/09 15:23:11 tomas Exp $
+-- $Id: soap.lua,v 1.7 2005/06/24 01:52:12 tomas Exp $
 ---------------------------------------------------------------------
 
 require"lxp.lom"
@@ -16,8 +16,7 @@ module (arg and arg[1])
 
 _COPYRIGHT = "Copyright (C) 2004-2005 Kepler Project"
 _DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
-_NAME = "LuaSOAP"
-_VERSION = "1.0.0"
+_VERSION = "LuaSOAP 1.0.0"
 
 local serialize
 
