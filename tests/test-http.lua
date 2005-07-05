@@ -1,5 +1,5 @@
-#!/usr/local/bin/lua
--- $Id: test-http.lua,v 1.2 2004/03/24 19:27:38 tomas Exp $
+#!/usr/local/bin/lua50
+-- $Id: test-http.lua,v 1.3 2005/07/05 16:34:21 tomas Exp $
 
 function table._tostring (tab, indent, spacing)
 	local s = {}
@@ -36,7 +36,7 @@ end
 
 
 require"soap"
-require"soap/http"
+require"soap.http"
 
 local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp",
 	"http://simon.fell.com/calc", "doubler", {
@@ -53,5 +53,33 @@ local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp",
 			{ tag = "number", 100 },
 		},
 	})
+print(ns, meth)
+table.print(ent)
+
+local ns, meth, ent = soap.http.call ("http://localhost/cgi-bin/cgi/t/soap-server.lua",
+	"http://simon.fell.com/calc", "doubler", {
+		{
+			tag = "nums",
+			attr = {
+				["xmlns:SOAP-ENC"] = "http://schemas.xmlsoap.org/soap/encoding/",
+				["SOAP-ENC:arrayType"] = "xsd:int[5]",
+			},
+			{ tag = "number", 10 },
+			{ tag = "number", 20 },
+			{ tag = "number", 30 },
+			{ tag = "number", 50 },
+			{ tag = "number", 100 },
+		},
+	})
+print(ns, meth)
+table.print(ent)
+
+local ns, meth, ent = soap.http.call ("http://localhost/cgi-bin/cgi/t/soap-server.lua",
+	"some-URI", "listMethods", { "all" })
+print(ns, meth)
+table.print(ent)
+
+local ns, meth, ent = soap.http.call ("http://localhost/cgi-bin/cgi/t/soap-server.lua",
+	"some-URI", "products", { "all" })
 print(ns, meth)
 table.print(ent)
