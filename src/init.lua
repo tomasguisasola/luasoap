@@ -1,18 +1,19 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: soap.lua,v 1.7 2005/06/24 01:52:12 tomas Exp $
+-- $Id: init.lua,v 1.1 2007/04/11 00:50:26 tomas Exp $
 ---------------------------------------------------------------------
 
-require"lxp.lom"
-
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
-local getn, tconcat, tinsert, tremove = table.getn, table.concat, table.insert, table.remove
-local format, strfind = string.format, string.find
-local max = math.max
+require"table"
+local tconcat, tinsert, tremove = table.concat, table.insert, table.remove
+require"string"
+local strfind, format = string.find, string.format
+local max = require"math".max
+require"lxp.lom"
 local parse = lxp.lom.parse
 
-module (arg and arg[1])
+module (...)
 
 _COPYRIGHT = "Copyright (C) 2004-2005 Kepler Project"
 _DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
@@ -39,7 +40,7 @@ local function attrs (a)
 				tinsert (c, format ("%s=%q", i, v))
 			end
 		end
-		if getn (c) > 0 then
+		if #c > 0 then
 			return " "..tconcat (c, " ")
 		else
 			return ""
@@ -140,7 +141,7 @@ function encode (namespace, method, entries, header)
 	insert_header (envelope_template, header)
 	-- Sets new body contents (and erase old content).
 	local body = (envelope_template[2] and envelope_template[2][1]) or envelope_template[1][1]
-	for i = 1, max (getn(body), getn(entries)) do
+	for i = 1, max (#body, #entries) do
 		body[i] = entries[i]
 	end
 	-- Sets method (actually, the table's tag) and namespace.
@@ -167,7 +168,7 @@ function decode (doc)
 	else
 		error ("Couldn't find SOAP Body!")
 	end
-	local _, _, method = strfind (obj[1].tag, "^.*:(.*)$")
+	local _, _, method = obj[1].tag:find ("^.*:(.*)$")
 	local entries = {}
 	for i, el in ipairs (obj[1]) do
 		entries[i] = el
