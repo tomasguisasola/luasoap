@@ -1,14 +1,14 @@
 ---------------------------------------------------------------------
 -- SOAP over HTTP.
 -- See Copyright notice in license.html
--- $Id: http.lua,v 1.4 2005/06/10 00:34:27 tomas Exp $
+-- $Id: http.lua,v 1.5 2007/04/11 00:14:28 tomas Exp $
 ---------------------------------------------------------------------
 
-require"socket.http"
-require"ltn12"
-require"soap"
-
-local request = socket.http.request
+local error, tonumber, tostring = error, tonumber, tostring
+local concat = (require"table").concat
+local ltn12 = require"ltn12"
+local request = (require"socket.http").request
+local soap = require"soap"
 
 module("soap.http")
 
@@ -32,11 +32,11 @@ function call (url, namespace, method, entries, headers)
 		sink = request_sink,
 		headers = {
 			["Content-Type"] = "text/xml",
-			["content-length"] = tostring(string.len(request_body)),
+			["content-length"] = tostring(request_body:len()),
 			["SOAPAction"] = '"'..method..'"',
 		},
 	}
-	local body = table.concat(tbody)
+	local body = concat(tbody)
 	if tonumber (code) == 200 then
 		return soap.decode (body)
 	else

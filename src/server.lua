@@ -73,7 +73,7 @@ local function callfunc (func, namespace, arg_table)
 		result = builderrorenvelope ("SOAP-ENV:Server", result[2])
 	else
 		table.remove (result, 1)
-		if table.getn (result) == 1 then
+		if #result == 1 then
 			result = result[1]
 		end
 	end
