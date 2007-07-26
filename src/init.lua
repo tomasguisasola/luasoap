@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: init.lua,v 1.1 2007/04/11 00:50:26 tomas Exp $
+-- $Id: init.lua,v 1.2 2007/07/26 19:41:13 tomas Exp $
 ---------------------------------------------------------------------
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
@@ -55,7 +55,7 @@ end
 ---------------------------------------------------------------------
 local function contents (obj)
 	if not obj[1] then
-		contents = ""
+		return ""
 	else
 		local c = {}
 		for i, v in ipairs (obj) do
@@ -100,7 +100,7 @@ end
 -- Cleans old header element anyway.
 ---------------------------------------------------------------------
 local header_template = {
-	tag = "SOAP-ENV:Header",
+	tag = "soap:Header",
 }
 local function insert_header (obj, header)
 	-- removes old header
@@ -114,13 +114,15 @@ local function insert_header (obj, header)
 end
 
 local envelope_template = {
-	tag = "SOAP-ENV:Envelope",
-	attr = { "xmlns:SOAP-ENV", "SOAP-ENV:encodingStyle",
-		["xmlns:SOAP-ENV"] = "http://schemas.xmlsoap.org/soap/envelope/",
-		["SOAP-ENV:encodingStyle"] = "http://schemas.xmlsoap.org/soap/encoding/",
+	tag = "soap:Envelope",
+	attr = { "xmlns:soap", "soap:encodingStyle", "xmlns:xsi", "xmlns:xsd",
+		["xmlns:soap"] = "http://schemas.xmlsoap.org/soap/envelope/",
+		["soap:encodingStyle"] = "http://schemas.xmlsoap.org/soap/encoding/",
+		["xmlns:xsi"] = "http://www.w3.org/2001/XMLSchema-instance",
+		["xmlns:xsd"] = "http://www.w3.org/2001/XMLSchema",
 	},
 	{
-		tag = "SOAP-ENV:Body",
+		tag = "soap:Body",
 		[1] = {
 			tag = nil, -- must be filled
 			attr = {}, -- must be filled
@@ -133,8 +135,8 @@ local envelope_template = {
 -- @param namespace String with the namespace of the elements.
 -- @param method String with the method's name.
 -- @param entries Table of SOAP elements (LuaExpat's format).
--- @param header Table describing the header of the SOAP-ENV (optional).
--- @return String with SOAP-ENV element.
+-- @param header Table describing the header of the SOAP envelope (optional).
+-- @return String with SOAP envelope element.
 ---------------------------------------------------------------------
 function encode (namespace, method, entries, header)
 	-- Cleans old header and insert a new one (if it exists).
@@ -158,19 +160,20 @@ end
 ---------------------------------------------------------------------
 function decode (doc)
 	local obj = assert (parse (doc))
-	assert (obj.tag == "SOAP-ENV:Envelope", "Not a SOAP Envelope: "..
-		tostring(obj.tag))
+	assert (obj.tag:match"%:([^:]*)$" == "Envelope",
+		"Not a SOAP Envelope: "..tostring(obj.tag))
 	local namespace = find_xmlns (obj.attr)
+	local params
 	if obj[1].tag == "SOAP-ENV:Body" then
-		obj = obj[1]
+		params = obj[1][1]
 	elseif obj[2].tag == "SOAP-ENV:Body" then
-		obj = obj[2]
+		params = obj[2][1]
 	else
 		error ("Couldn't find SOAP Body!")
 	end
-	local _, _, method = obj[1].tag:find ("^.*:(.*)$")
+	local method = params.tag:match"%:([^:]*)$" or params.tag
 	local entries = {}
-	for i, el in ipairs (obj[1]) do
+	for i, el in ipairs (params) do
 		entries[i] = el
 	end
 	return namespace, method, entries
