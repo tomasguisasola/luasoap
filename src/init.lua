@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: init.lua,v 1.2 2007/07/26 19:41:13 tomas Exp $
+-- $Id: init.lua,v 1.3 2009/03/17 20:27:45 tomas Exp $
 ---------------------------------------------------------------------
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
@@ -135,10 +135,17 @@ local envelope_template = {
 -- @param namespace String with the namespace of the elements.
 -- @param method String with the method's name.
 -- @param entries Table of SOAP elements (LuaExpat's format).
--- @param header Table describing the header of the SOAP envelope (optional).
--- @return String with SOAP envelope element.
+-- @param header Table describing the header of the soap (optional).
+-- @param internal_namespace String with the optional namespace used
+--	as a prefix for the method name (default = "").
+-- @return String with soap element.
 ---------------------------------------------------------------------
-function encode (namespace, method, entries, header)
+function encode (namespace, method, entries, header, internal_namespace)
+	local xmlns = "xmlns"
+	if internal_namespace then
+		xmlns = xmlns..":"..internal_namespace
+		method = internal_namespace..":"..method
+	end
 	-- Cleans old header and insert a new one (if it exists).
 	insert_header (envelope_template, header)
 	-- Sets new body contents (and erase old content).
@@ -147,8 +154,8 @@ function encode (namespace, method, entries, header)
 		body[i] = entries[i]
 	end
 	-- Sets method (actually, the table's tag) and namespace.
-	body.tag = (namespace and "m:" or "")..method
-	body.attr["xmlns:m"] = namespace
+	body.tag = method
+	body.attr[xmlns] = namespace
 	return serialize (envelope_template)
 end
 
@@ -160,20 +167,23 @@ end
 ---------------------------------------------------------------------
 function decode (doc)
 	local obj = assert (parse (doc))
-	assert (obj.tag:match"%:([^:]*)$" == "Envelope",
-		"Not a SOAP Envelope: "..tostring(obj.tag))
+	local ns = obj.tag:match ("^(.-):")
+	assert (obj.tag == ns..":Envelope", "Not a SOAP Envelope: "..
+		tostring(obj.tag))
 	local namespace = find_xmlns (obj.attr)
-	local params
-	if obj[1].tag == "SOAP-ENV:Body" then
-		params = obj[1][1]
-	elseif obj[2].tag == "SOAP-ENV:Body" then
-		params = obj[2][1]
+	local tag1 = obj[1].tag
+	local tag2 = obj[2] and obj[2].tag
+	if tag1 == ns..":Body" or tag1 == "SOAP-ENV:Body" then
+		obj = obj[1][1]
+	elseif tag2 == ns..":Body" or tag2 == "SOAP-ENV:Body" then
+		obj = obj[2][1]
 	else
 		error ("Couldn't find SOAP Body!")
 	end
-	local method = params.tag:match"%:([^:]*)$" or params.tag
+	local method = obj.tag:match ("%:([^:]*)$") or obj.tag
+
 	local entries = {}
-	for i, el in ipairs (params) do
+	for i, el in ipairs (obj) do
 		entries[i] = el
 	end
 	return namespace, method, entries
