@@ -1,10 +1,12 @@
 ---------------------------------------------------------------------
--- SOAP over HTTP.
+-- SOAP client.
+-- Default is over HTTP, but one can install other modules such as
+-- client.https to provide access via HTTPS.
 -- See Copyright notice in license.html
--- $Id: client.lua,v 1.1 2009/05/27 13:02:31 tomas Exp $
+-- $Id: client.lua,v 1.2 2009/05/27 13:22:41 tomas Exp $
 ---------------------------------------------------------------------
 
-local assert, tonumber, tostring, pcall, require, print = assert, tonumber, tostring, pcall, require, print
+local assert, tonumber, tostring, pcall = assert, tonumber, tostring, pcall
 local concat = require("table").concat
 
 local ltn12 = require("ltn12")
@@ -13,6 +15,7 @@ local soap = require("soap")
 
 module("soap.client")
 
+-- Support for SOAP over HTTP is default and only depends on LuaSocket
 http = socket_http
 
 ---------------------------------------------------------------------
@@ -40,7 +43,7 @@ function call(url, namespace, method, method_name, entries, headers)
 		},
 	}
 
-	local protocol = url.url:match"^(%a+)" -- obtém o nome do protocolo
+	local protocol = url.url:match"^(%a+)" -- protocol's name
 	local mod = assert(_M[protocol], '"'..protocol..'" protocol support not loaded. Try require"soap.client.'..protocol..'" to enable it.')
 	local request = assert(mod.request, 'Could not find request function on module soap.client.'..protocol)
 
