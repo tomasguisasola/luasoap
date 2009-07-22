@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: init.lua,v 1.4 2009/05/27 12:57:18 tomas Exp $
+-- $Id: init.lua,v 1.5 2009/07/22 14:13:35 tomas Exp $
 ---------------------------------------------------------------------
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
@@ -135,10 +135,10 @@ local envelope_template = {
 -- @param namespace String with the namespace of the elements.
 -- @param method String with the method's name.
 -- @param entries Table of SOAP elements (LuaExpat's format).
--- @param header Table describing the header of the soap (optional).
+-- @param header Table describing the header of the SOAP envelope (optional).
 -- @param internal_namespace String with the optional namespace used
 --	as a prefix for the method name (default = "").
--- @return String with soap element.
+-- @return String with SOAP envelope element.
 ---------------------------------------------------------------------
 function encode (namespace, method, entries, header, internal_namespace)
 	local xmlns = "xmlns"
