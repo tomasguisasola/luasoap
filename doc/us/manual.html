@@ -129,55 +129,83 @@ necessary), the sequence of <em>key</em>s should be placed at the
 
 <h2><a name="basic"></a>Basic support</h2>
 
-<p>The file <code>soap.lua</code> implements all basic support for
+<p>The module <code>soap</code> implements all basic support for
 encoding and decoding SOAP messages. There are two functions:</p>
 
 <ul>
 <li style="list-style: none"><a name="encode"></a></li>
 
-<li><b><code>encode (namespace, element_name, entries, headers*)
+<li><b><code>encode(namespace, method, entries[,header[,internal_namespace]])
 =&gt; envelope</code></b><br>
  Builds a SOAP document containing a <code>SOAP-Envelope</code>
-element. It receives two strings with the namespace (an URI) and
-the SOAP-element's name and, as the third argument, a table with
-zero or more <a href="#soap_elements">SOAP elements</a>. An
-optional fourth argument can be used to generate the SOAP Header
-(it must be a <a href="#soap_elements">SOAP element</a> too). The
-result is a string containing the SOAP document. <a name=
+element.
+It receives two strings with the namespace (an URI) and
+the method's name and, as the third argument, a table with
+zero or more <a href="#soap_elements">SOAP elements</a>
+(following LuaExpat's <a href="http://www.keplerproject.org/luaexpat/lom.html">
+LOM</a> format).
+An optional fourth argument can be used to generate the SOAP Header
+(it must be a <a href="#soap_elements">SOAP element</a> too).
+An optional fifth argument indicate the internal namespace
+(default = "").
+The result is a string containing the SOAP document. <a name=
 "decode"></a></li>
 
 <li><b><code>decode (method_response) =&gt; namespace,
-element_name, elements</code></b><br>
- Disassembles a SOAP document into Lua objects. It receives a
-string containing the SOAP document. The result are the namespace
-(string), the SOAP-element's name (string) and a table with the
-contents of the SOAP Body. Each element of this table can be a
+method_name, elements</code></b><br>
+ Disassembles a SOAP document into Lua objects.
+It receives a string containing the SOAP document.
+The results are: the namespace (string),
+the SOAP-element method's name (string) and
+a table with the contents of the SOAP Body.
+Each element of this table can be a
 string or a <a href="#soap_elements">SOAP element</a>.</li>
 </ul>
 
 
 <h2><a name="client"></a>Client side</h2>
 
-<p>The file <code>soap.http.lua</code> implements a simple
-stand-alone client based on <a href=
-"http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>. The
-following function is provided:</p>
+<p>The module <code>soap.client</code> implements a stand-alone client
+which works over HTTP and is based on <a href=
+"http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.
+The following function is provided:</p>
 
 <ul>
 <li style="list-style: none"><a name="call"></a></li>
 
-<li><b><code>call (url, soapaction, namespace, element_name, entries,
-headers*)</code></b><br>
+<li><b><code>call (url, soapaction, namespace, method, entries [, headers])</code></b><br>
  It encapsulates the call of <code>encode</code> and
-<code>decode</code> over a connection to an HTTP server. The result
-is the same as <a href="#decode">decode</a> function: the namespace
-(string), the SOAP-element's name (string) and a table with the
-contents of the SOAP Body.
-The <code>soapaction</code> argument must be the value of the corresponding
-header.
+<code>decode</code> over a connection to an HTTP server.
+The arguments are the URL of the service (a string),
+the value of the <code>SOAPAction</code> header (a string),
+and the same arguments of the
+<a href="#encode"><code>encode</code></a> function.
+The result is the same of the <a href="#decode">decode</a> function:
+the namespace (string),
+the SOAP-element method's name (string) and
+a table with the contents of the SOAP Body.
 Extra headers could be passed to the <code>encode</code> function as
 the last (optional) argument.</li>
 </ul>
+
+<p>An additional optional module <code>soap.client.https</code>
+implements the underlying function to use SOAP over an HTTPS connection.
+There is no need to use another call function, since it is encapsulated
+into the client implementation.
+In fact, the <code>call</code> function inspects the <code>url</code>
+argument to check over what protocol the SOAP message should be transfered.
+This protocol should be supported through a function
+<code>soap.client.<i>protocol</i></code>, where <i>protocol</i> is a
+function with the same signature of LuaSocket's <code>http.request</code>
+function.
+The <code>soap.client.http</code> is this exact function and the
+<code>soap.client.https</code> is LuaSec's <code>https.request</code>
+function which wraps LuaSocket's <code>http.request</code> over an
+HTTPS connection (this function is available since LuaSec version 0.4).
+</p>
+
+<p><code>soap.client.https</code> module depends of
+<a href="http://luasec.luaforge.net/">LuaSec</a>.</p>
 
 
 <h2><a name="references"></a>References</h2>
@@ -196,7 +224,7 @@ Here is a list of related documentation:
 <div id="about">
 	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
 	<p><small>
-	$Id: manual.html,v 1.8 2007/07/26 20:43:46 tomas Exp $
+	$Id: manual.html,v 1.9 2009/07/22 19:02:46 tomas Exp $
 	</small></p>
 </div> <!-- id="about" -->
 

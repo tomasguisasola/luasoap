@@ -15,13 +15,14 @@ This module provides a way to use SOAP over HTTPS.]],
 
 dependencies = {
    "lua >= 5.1",
-   "luaexpat >= 1.1.0-3",
-   "luasocket >= 2.0.2-1",
    "luasoap >= 1.1-1",
    "luasec >= 0.4-1",
 }
 
 build = {
-   type = "none",
+   type = "builtin",
+   modules = {
+      ["soap.client.https"] = "src/client/https.lua",
+   }
 }
 

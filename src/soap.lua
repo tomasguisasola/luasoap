@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: init.lua,v 1.5 2009/07/22 14:13:35 tomas Exp $
+-- $Id: soap.lua,v 1.9 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
@@ -17,7 +17,7 @@ module (...)
 
 _COPYRIGHT = "Copyright (C) 2004-2009 Kepler Project"
 _DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
-_VERSION = "LuaSOAP 1.1.0"
+_VERSION = "LuaSOAP 2.0.0"
 
 local serialize
 
@@ -132,31 +132,45 @@ local envelope_template = {
 
 ---------------------------------------------------------------------
 -- Converts a LuaExpat table into a SOAP message.
--- @param namespace String with the namespace of the elements.
--- @param method String with the method's name.
--- @param entries Table of SOAP elements (LuaExpat's format).
--- @param header Table describing the header of the SOAP envelope (optional).
--- @param internal_namespace String with the optional namespace used
---	as a prefix for the method name (default = "").
+-- @param args Table with the arguments, which could be:
+-- namespace: String with the namespace of the elements.
+-- method: String with the method's name;
+-- entries: Table of SOAP elements (LuaExpat's format);
+-- header: Table describing the header of the SOAP envelope (optional);
+-- internal_namespace: String with the optional namespace used
+--	as a prefix for the method name (default = "");
 -- @return String with SOAP envelope element.
 ---------------------------------------------------------------------
-function encode (namespace, method, entries, header, internal_namespace)
+function encode (args)
 	local xmlns = "xmlns"
-	if internal_namespace then
-		xmlns = xmlns..":"..internal_namespace
-		method = internal_namespace..":"..method
+	if args.internal_namespace then
+		xmlns = xmlns..":"..args.internal_namespace
+		args.method = args.internal_namespace..":"..args.method
 	end
 	-- Cleans old header and insert a new one (if it exists).
-	insert_header (envelope_template, header)
+	insert_header (envelope_template, args.header)
 	-- Sets new body contents (and erase old content).
 	local body = (envelope_template[2] and envelope_template[2][1]) or envelope_template[1][1]
-	for i = 1, max (#body, #entries) do
-		body[i] = entries[i]
+	for i = 1, max (#body, #args.entries) do
+		body[i] = args.entries[i]
 	end
 	-- Sets method (actually, the table's tag) and namespace.
-	body.tag = method
-	body.attr[xmlns] = namespace
+	body.tag = args.method
+	body.attr[xmlns] = args.namespace
 	return serialize (envelope_template)
+end
+
+--
+-- Find the first child with a tag.
+-- Usefull to ignore white spaces.
+-- @param obj Table with XML elements (LOM structure).
+-- return Table (LOM structure) of the first child.
+local function find_first_child(obj)
+    for _,o in ipairs(obj) do
+        if type(o) == "table" and obj.tag then
+            return o
+        end
+    end
 end
 
 ---------------------------------------------------------------------
@@ -171,12 +185,9 @@ function decode (doc)
 	assert (obj.tag == ns..":Envelope", "Not a SOAP Envelope: "..
 		tostring(obj.tag))
 	local namespace = find_xmlns (obj.attr)
-	local tag1 = obj[1].tag
-	local tag2 = obj[2] and obj[2].tag
-	if tag1 == ns..":Body" or tag1 == "SOAP-ENV:Body" then
-		obj = obj[1][1]
-	elseif tag2 == ns..":Body" or tag2 == "SOAP-ENV:Body" then
-		obj = obj[2][1]
+	local o = find_first_child(obj)
+	if o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body" then
+		obj = find_first_child(o)
 	else
 		error ("Couldn't find SOAP Body!")
 	end

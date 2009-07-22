@@ -1,11 +1,10 @@
-#!/usr/local/bin/lua50
 ---------------------------------------------------------------------
 -- LuaSOAP test file.
--- $Id: test.lua,v 1.5 2005/07/05 16:34:21 tomas Exp $
+-- $Id: test.lua,v 1.6 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
-require"lxp.lom"
-require"soap"
+local lom = require"lxp.lom"
+local soap = require"soap"
 
 function table.equal (t1, t2)
 	assert (type(t1) == type(t2), string.format ("%s (%s) ~= %s (%s)", type(t1),
@@ -32,25 +31,25 @@ local tests = {
 	entries = { { tag = "symbol", "DEF" }, },
 	header = {
 		tag = "t:Transaction",
-		attr = { "xmlns:t", "SOAP-ENV:mustUnderstand",
+		attr = { "xmlns:t", "soap:mustUnderstand",
 			["xmlns:t"] = "some-URI",
-			["SOAP-ENV:mustUnderstand"] = 1,
+			["soap:mustUnderstand"] = 1,
 		},
 		5,
 	},
 	xml = [[
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Header>
-		<t:Transaction xmlns:t="some-URI" SOAP-ENV:mustUnderstand="1">
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Header>
+		<t:Transaction xmlns:t="some-URI" soap:mustUnderstand="1">
 			5
 		</t:Transaction>
-	</SOAP-ENV:Header>
-	<SOAP-ENV:Body>
-		<m:GetLastTradePrice xmlns:m="Some-URI">
+	</soap:Header>
+	<soap:Body>
+		<GetLastTradePrice xmlns="Some-URI">
 			<symbol>DEF</symbol>
-		</m:GetLastTradePrice>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>]]
+		</GetLastTradePrice>
+	</soap:Body>
+</soap:Envelope>]]
 },
 
 {
@@ -62,15 +61,15 @@ local tests = {
 		{ tag = "Price", 34.1 },
 	},
 	xml = [[
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Body>
-		<m:GetLastTradePriceDetailed xmlns:m="Some-URI">
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Body>
+		<GetLastTradePriceDetailed xmlns="Some-URI">
 			<Symbol>DEF</Symbol>
 			<Company>DEF Corp</Company>
 			<Price>34.1</Price>
-		</m:GetLastTradePriceDetailed>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>]]
+		</GetLastTradePriceDetailed>
+	</soap:Body>
+</soap:Envelope>]]
 },
 
 {
@@ -89,18 +88,18 @@ local tests = {
 		5,
 	},
 	xml = [[
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Header>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Header>
 		<t:Transaction xmlns:t="some-URI" xsi:type="xsd:int" mustUnderstand="1">
 			5
 		</t:Transaction>
-	</SOAP-ENV:Header>
-	<SOAP-ENV:Body>
-		<m:GetLastTradePriceResponse xmlns:m="Some-URI">
+	</soap:Header>
+	<soap:Body>
+		<GetLastTradePriceResponse xmlns="Some-URI">
 			<Price>34.5</Price>
-		</m:GetLastTradePriceResponse>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>]]
+		</GetLastTradePriceResponse>
+	</soap:Body>
+</soap:Envelope>]]
 },
 
 {
@@ -114,9 +113,9 @@ local tests = {
 		}
 	},
 	xml = [[
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Body>
-		<m:GetLastTradePriceResponse xmlns:m="Some-URI">
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Body>
+		<GetLastTradePriceResponse xmlns="Some-URI">
 			<PriceAndVolume>
 				<LastTradePrice>
 					34.5
@@ -125,34 +124,34 @@ local tests = {
 					10000
 				</DayVolume>
 			</PriceAndVolume>
-		</m:GetLastTradePriceResponse>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>]]
+		</GetLastTradePriceResponse>
+	</soap:Body>
+</soap:Envelope>]]
 },
 
 {
 	namespace = nil,
-	method = "SOAP-ENV:Fault",
+	method = "soap:Fault",
 	entries = {
-		{ tag = "faultcode", "SOAP-ENV:MustUnderstand", },
+		{ tag = "faultcode", "soap:MustUnderstand", },
 		{ tag = "faultstring", "SOAP Must Understand Error", },
 	},
 	xml = [[
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Body>
-		<SOAP-ENV:Fault>
-			<faultcode>SOAP-ENV:MustUnderstand</faultcode>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Body>
+		<soap:Fault>
+			<faultcode>soap:MustUnderstand</faultcode>
 			<faultstring>SOAP Must Understand Error</faultstring>
-		</SOAP-ENV:Fault>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>]]
+		</soap:Fault>
+	</soap:Body>
+</soap:Envelope>]]
 },
 
 {
 	namespace = nil,
-	method = "SOAP-ENV:Fault",
+	method = "soap:Fault",
 	entries = {
-		{ tag = "faultcode", "SOAP-ENV:Server", },
+		{ tag = "faultcode", "soap:Server", },
 		{ tag = "faultstring", "Server Error", },
 		{
 			tag = "detail",
@@ -165,10 +164,10 @@ local tests = {
 		},
 	},
 	xml = [[
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Body>
-		<SOAP-ENV:Fault>
-			<faultcode>SOAP-ENV:Server</faultcode>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Body>
+		<soap:Fault>
+			<faultcode>soap:Server</faultcode>
 			<faultstring>Server Error</faultstring>
 			<detail>
 				<e:myfaultdetails xmlns:e="Some-URI">
@@ -180,18 +179,57 @@ local tests = {
 					</errorcode>
 				</e:myfaultdetails>
 			</detail>
-		</SOAP-ENV:Fault>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>]]
+		</soap:Fault>
+	</soap:Body>
+</soap:Envelope>]]
+},
+
+{
+	namespace = nil,
+	method = "easyStructTest",
+	entries = {
+		{ tag = "stooges",
+			{
+				tag = "curly",
+				attr = { "xsi:type", ["xsi:type"] = "xsd:int", },
+				-21,
+			},
+			{
+				tag = "larry",
+				attr = { "xsi:type", ["xsi:type"] = "xsd:int", },
+				59,
+			},
+			{
+				tag = "moe",
+				attr = { "xsi:type", ["xsi:type"] = "xsd:int", },
+				11,
+			},
+		},
+	},
+	xml = [[
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
+	<soap:Body>
+		<easyStructTest>
+			<stooges>
+				<curly xsi:type="xsd:int">-21</curly>
+				<larry xsi:type="xsd:int">59</larry>
+				<moe xsi:type="xsd:int">11</moe>
+			</stooges>
+		</easyStructTest>
+	</soap:Body>
+</soap:Envelope>]]
 },
 
 }
 
 for i, t in ipairs(tests) do
-	local s = soap.encode (t.namespace, t.method, t.entries, t.header)
+	io.write(i..": "); io.flush()
+	local s = soap.encode (t)
 	s = string.gsub (s, "[\n\r\t]", "")
-	local ds = assert (lxp.lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..s))
+	local ds = assert (lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..s))
 	t.xml = string.gsub (t.xml, "[\n\r\t]", "")
-	local dx = assert (lxp.lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml))
-	print (table.equal (ds, dx))
+	local dx = assert (lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml))
+	assert (table.equal (ds, dx))
+	io.write"\r"
 end
+print"Ok!"

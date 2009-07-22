@@ -70,9 +70,12 @@ Below is a small sample code displaying the use of the library in a
 client application. 
 
 <pre class="example">
-require "soap.http"
-local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp", 
-	"http://simon.fell.com/calc", "doubler", {
+require "soap.client"
+local ns, meth, ent = soap.client.call {
+	url = "http://soap.4s4c.com/ssss4c/soap.asp", 
+	soapaction = "doubler",
+	method = "http://simon.fell.com/calc",
+	entries = {
         {
             tag = "nums",
             attr = {
@@ -85,9 +88,12 @@ local ns, meth, ent = soap.http.call ("http://soap.4s4c.com/ssss4c/soap.asp",
             { tag = "number", 50 },
             { tag = "number", 100 },
         },
-    })
+    }
+}
 print("namespace = ", ns, "element name = ", meth)
-for i, elem in ipairs (ent[1]) do print (elem[1]) end
+for i, elem in ipairs (ent[1]) do
+	print (elem[1])
+end
 </pre>
 
 </div> <!-- id="content" -->
@@ -97,7 +103,7 @@ for i, elem in ipairs (ent[1]) do print (elem[1]) end
 <div id="about">
 	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
 	<p><small>
-	$Id: examples.html,v 1.1 2005/05/18 18:37:24 uid20006 Exp $
+	$Id: examples.html,v 1.2 2009/07/22 19:02:46 tomas Exp $
 	</small></p>
 </div> <!-- id="about" -->
 

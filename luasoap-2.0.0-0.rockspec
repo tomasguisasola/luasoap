@@ -2,7 +2,7 @@ package = "luasoap"
 version = "1.1-1"
 
 source = {
-   url="http://luasoap.luaforge.net/luasoap-1.1-1.tar",
+   url="http://luasoap.luaforge.net/luasoap-1.1-1.tar.gz",
 }
 
 description = {
@@ -19,6 +19,11 @@ dependencies = {
 }
 
 build = {
-   type = "none",
+   type = "builtin",
+   modules = {
+      soap  = "src/soap.lua",
+      ["soap.server"] = "src/server.lua",
+      ["soap.client"] = "src/client.lua",
+   }
 }
 
