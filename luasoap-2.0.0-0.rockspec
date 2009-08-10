@@ -1,5 +1,5 @@
 package = "luasoap"
-version = "1.1-1"
+version = "2.0.0-0"
 
 source = {
    url="http://luasoap.luaforge.net/luasoap-1.1-1.tar.gz",
