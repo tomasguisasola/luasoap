@@ -1,3 +1,8 @@
+---------------------------------------------------------------------
+-- LuaSOAP support for service development.
+-- See Copyright Notice in license.html
+-- $Id:$
+---------------------------------------------------------------------
 local type, tostring, pcall, unpack, pairs, ipairs = type, tostring, pcall, unpack, pairs, ipairs
 local error, assert = error, assert
 local table = require"table"
@@ -6,6 +11,10 @@ local cgilua = cgilua
 local soap = require"soap"
 
 module("soap.server")
+
+_COPYRIGHT = "Copyright (C) 2004-2010 Kepler Project"
+_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
+_VERSION = "LuaSOAP 2.0.1 service helping functions"
 
 local encoding = "iso-8859-1"
 local xml_header = '<?xml version="1.0" encoding="'..encoding..'"?>\n'
@@ -17,7 +26,7 @@ __methods = {
 		for name in pairs(__methods) do
 			table.insert(l, { tag = "methodName", name })
 		end
-		return soap.encode(nil, "listMethodsResponse", l)
+		return soap.encode({method = "listMethodsResponse", entries = l})
 	end,
 }
 
@@ -44,11 +53,14 @@ end
 ---------------------------------------------------------------------
 function builderrorenvelope(faultcode, faultstring, extra)
 	faultstring = faultstring:gsub("([<>])", { ["<"] = "&lt;", [">"] = "&gt;", })
-	return soap.encode(nil, "soap:Fault", {
-        { tag = "faultcode", faultcode, },
-        { tag = "faultstring", faultstring, },
-		extra,
-    })
+	return soap.encode({
+		entries = {
+			{ tag = "faultcode", faultcode, },
+			{ tag = "faultstring", faultstring, },
+			extra,
+		},
+		method = "soap:Fault",
+	})
 end
 
 ---------------------------------------------------------------------
@@ -62,7 +74,7 @@ end
 
 ---------------------------------------------------------------------
 local function callfunc(func, namespace, arg_table)
-	local result = { pcall(func, namespace, unpack(arg_table)) }
+	local result = { pcall(func, namespace, arg_table) }
 	local ok = result[1]
 	if not ok then
 		result = builderrorenvelope("soap:ServiceError", result[2])
@@ -139,13 +151,17 @@ end
 
 ---------------------------------------------------------------------
 local function wsdl_gen_binding(desc)
+	local soap_action = ''
+	if __service.soap_action then
+		soap_action = 'soapAction="'..__service.soap_action..desc.name..'"'
+	end
 	return string.format([[ 
     <wsdl:operation name="%s">
-      <soap:operation soapAction="%s" style="document" />
+      <soap:operation %s style="document" />
       <wsdl:input><soap:body use="literal" /></wsdl:input>
       <wsdl:output><soap:body use="literal" /></wsdl:output>
     </wsdl:operation>]],
-		desc.name, __service.soap_action..desc.name)
+		desc.name, soap_action)
 end
 
 ---------------------------------------------------------------------
@@ -274,7 +290,7 @@ function export(desc)
 
 		method = function (...) -- ( namespace, unpack(arguments) )
 			local res = desc.method(...)
-			return soap.encode(__service.namespace, desc.response.name, res)
+			return soap.encode({namespace = __service.namespace, method = desc.response.name, entries = res})
 		end,
 	}
 end
@@ -291,7 +307,7 @@ function handle_request(postdata, querystring)
 		namespace, func, arg_table = decodedata(postdata)
 		header = xml_header
 	else
-		if querystring == "wsdl" then -- WSDL service
+		if querystring and querystring:lower() == "wsdl" then -- WSDL service
 			func = function ()
 				return __service.wsdl or generate_wsdl()
 			end

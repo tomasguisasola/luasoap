@@ -4,7 +4,7 @@
 -- $Id: soap.lua,v 1.9 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
-local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
+local assert, ipairs, pairs, tonumber, tostring, type = assert, ipairs, pairs, tonumber, tostring, type
 require"table"
 local tconcat, tinsert, tremove = table.concat, table.insert, table.remove
 require"string"
@@ -15,9 +15,9 @@ local parse = lxp.lom.parse
 
 module (...)
 
-_COPYRIGHT = "Copyright (C) 2004-2009 Kepler Project"
+_COPYRIGHT = "Copyright (C) 2004-2010 Kepler Project"
 _DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
-_VERSION = "LuaSOAP 2.0.0"
+_VERSION = "LuaSOAP 2.0.1"
 
 local serialize
 
@@ -116,7 +116,7 @@ end
 local envelope_template = {
 	tag = "soap:Envelope",
 	attr = { "xmlns:soap", "soap:encodingStyle", "xmlns:xsi", "xmlns:xsd",
-		["xmlns:soap"] = "http://schemas.xmlsoap.org/soap/envelope/",
+		["xmlns:soap"] = nil, -- to be filled
 		["soap:encodingStyle"] = "http://schemas.xmlsoap.org/soap/encoding/",
 		["xmlns:xsi"] = "http://www.w3.org/2001/XMLSchema-instance",
 		["xmlns:xsd"] = "http://www.w3.org/2001/XMLSchema",
@@ -129,6 +129,8 @@ local envelope_template = {
 		},
 	}
 }
+local xmlns_soap = "http://schemas.xmlsoap.org/soap/envelope/"
+local xmlns_soap12 = "http://www.w3.org/2003/05/soap-envelope"
 
 ---------------------------------------------------------------------
 -- Converts a LuaExpat table into a SOAP message.
@@ -139,9 +141,15 @@ local envelope_template = {
 -- header: Table describing the header of the SOAP envelope (optional);
 -- internal_namespace: String with the optional namespace used
 --	as a prefix for the method name (default = "");
+-- soapversion: Number of SOAP version (default = 1.1);
 -- @return String with SOAP envelope element.
 ---------------------------------------------------------------------
 function encode (args)
+	if tonumber(args.soapversion) == 1.2 then
+		envelope_template.attr["xmlns:soap"] = xmlns_soap12
+	else
+		envelope_template.attr["xmlns:soap"] = xmlns_soap
+	end
 	local xmlns = "xmlns"
 	if args.internal_namespace then
 		xmlns = xmlns..":"..args.internal_namespace

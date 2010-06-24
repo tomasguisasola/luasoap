@@ -2,7 +2,7 @@
 
 local soap_client = require"soap.client"
 
-local ns, meth, ent = soap_client.call {
+local request = {
   url = "http://validator.soapware.org",
   soapaction = "/validator1",
   namespace = nil,
@@ -14,7 +14,12 @@ local ns, meth, ent = soap_client.call {
       { tag = "larry", attr = { "xsi:type", ["xsi:type"] = "xsd:int", }, 5 },
       { tag = "moe",   attr = { "xsi:type", ["xsi:type"] = "xsd:int", }, 41 },
     },
-  }}
+  }
+}
 
+local ns, meth, ent = soap_client.call (request)
 assert(tonumber(ent[2][1]) == 41)
+
+request.entries[1][2][1] = "abc"
+soap_client.call (request)
 print"Ok!"

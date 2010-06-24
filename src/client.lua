@@ -13,7 +13,13 @@ local ltn12 = require("ltn12")
 local socket_http = require("socket.http")
 local soap = require("soap")
 
-module("soap.client")
+module(...)
+
+local xml_header = '<?xml version="1.0"?>'
+
+local mandatory_soapaction = "Field `soapaction' is mandatory for SOAP 1.1 (or you can force SOAP version with `soapversion' field)"
+local mandatory_url = "Field `url' is mandatory"
+local invalid_args = "Supported SOAP versions: 1.1 and 1.2.  The presence of soapaction field is mandatory for SOAP version 1.1.\nsoapversion, soapaction = "
 
 -- Support for SOAP over HTTP is default and only depends on LuaSocket
 http = socket_http
@@ -29,21 +35,37 @@ http = socket_http
 -- header: Table describing the header of the SOAP-ENV (optional).
 -- internal_namespace: String with the optional namespace used
 --  as a prefix for the method name (default = "").
+-- soapversion: Number with SOAP version (default = 1.1).
 -- @return String with namespace, String with method's name and
 --	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
 function call(args)
+	local soap_action, content_type_header
+	if (not args.soapversion) or tonumber(args.soapversion) == 1.1 then
+		soap_action = '"'..assert(args.soapaction, mandatory_soapaction)..'"'
+		content_type_header = "text/xml"
+	elseif tonumber(args.soapversion) == 1.2 then
+		soap_action = nil
+		content_type_header = "application/soap+xml"
+	else
+		assert(false, invalid_args..tostring(args.soapversion)..", "..tostring(args.soapaction))
+	end
+
+	local encoding
+	if args.encoding then
+		xml_header = xml_header:gsub('"%?>', '" encoding="'..args.encoding..'"?>')
+	end
+	local request_body = xml_header..soap.encode(args)
 	local request_sink, tbody = ltn12.sink.table()
-	local request_body = soap.encode(args)
 	local url = {
-		url = args.url,
+		url = assert(args.url, mandatory_url),
 		method = "POST",
 		source = ltn12.source.string(request_body),
 		sink = request_sink,
 		headers = {
-			["Content-Type"] = "text/xml",
+			["Content-Type"] = content_type_header,
 			["content-length"] = tostring(request_body:len()),
-			["SOAPAction"] = '"'..args.soapaction..'"',
+			["SOAPAction"] = soap_action,
 		},
 	}
 
@@ -53,10 +75,10 @@ function call(args)
 
 	local err, code, headers, status = request(url)
 	local body = concat(tbody)
-	assert(tonumber(code) == 200, tostring(err or code).."\n\n"..tostring(body))
+	assert(tonumber(code) == 200, "Error on request: "..tostring(err or code).."\n\n"..tostring(body))
 
 	local ok, error_or_ns, method, result = pcall(soap.decode, body)
-	assert(ok, tostring(error_or_ns).."\n\n"..tostring(body))
+	assert(ok, "Error while decoding: "..tostring(error_or_ns).."\n\n"..tostring(body))
 
 	return error_or_ns, method, result
 end

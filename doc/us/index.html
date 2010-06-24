@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>LuaSOAP: SOAP interface to the Lua programming language</title>
     <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
@@ -52,7 +52,13 @@
 				<li><a href="manual.html#references">References</a></li>
 			</ul>
 		</li>
-		<li><a href="examples.html">Examples</a></li>
+		<li><a href="examples.html">Examples</a>
+            <ul>
+                <li><a href="#soap_elements_example">SOAP elements</a></li>
+                <li><a href="#escape_example">Escaping example</a></li>
+                <li><a href="#client_example">Client example</a></li>
+            </ul>
+        </li>
 		<li><a href="license.html">License</a></li>
 	</ul>
 </div> <!-- id="navigation" -->
@@ -73,7 +79,7 @@ to handle XML documents.</p>
 
 <h2><a name="status"></a>Status</h2>
 
-<p>Current version is 2.0. It was developed for Lua 5.0 and 5.1.</p>
+<p>Current version is 2.0. It was developed for Lua 5.1.</p>
 
 
 <h2><a name="download"></a>Download</h2>
@@ -87,7 +93,7 @@ LuaSOAP can be downloaded in source code from its
 <h2><a name="history"></a>History</h2>
 
 <dl class="history">
-    <dt><strong>LuaSOAP 2.0</strong> [??/Jun/2009]</dt>
+    <dt><strong>LuaSOAP 2.0</strong> [??/??/2010]</dt>
     <dd>
     <ul>
         <li>Change in the signature of
@@ -95,7 +101,7 @@ LuaSOAP can be downloaded in source code from its
 <a href="manual.html#call">soap.client.call</a></li>
         <li>Update to SOAP 1.2</li>
         <li>Added support to HTTPS via
-            <a href="http://luasec.luaforge.net/">LuaSec</a>
+            <a href="http://luasec.luaforge.net/">LuaSec</a></li>
     </ul>
     </dd>
 
@@ -121,8 +127,9 @@ Carregal and Tom&aacute;s Guisasola as part of the
 <a href="http://www.keplerproject.org">Kepler Project</a>
 which holds its copyright. It was implemented by Tom&aacute;s Guisasola and Pablo Musa with invaluable contributions from Bruno Silvestre.</p>
 
-<p>LuaSOAP development was sponsored by <a href=
-"http://www.fabricadigital.com.br">F&aacute;brica Digital</a> and
+<p>LuaSOAP development was sponsored by
+<a href="http://www.puc-rio.br">PUC-Rio</a>,
+<a href="http://www.fabricadigital.com.br">F&aacute;brica Digital</a> and
 FINEP.</p>
 
 
