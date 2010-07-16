@@ -3,7 +3,7 @@
 -- See Copyright Notice in license.html
 -- $Id:$
 ---------------------------------------------------------------------
-local type, tostring, pcall, unpack, pairs, ipairs = type, tostring, pcall, unpack, pairs, ipairs
+local next, type, tostring, pcall, unpack, pairs, ipairs = next, type, tostring, pcall, unpack, pairs, ipairs
 local error, assert = error, assert
 local table = require"table"
 local string = require"string"
@@ -89,6 +89,9 @@ end
 
 ---------------------------------------------------------------------
 local function wsdl_gen_type_aux(message)
+	if not next(message, nil) then
+		return ""
+	end
 	local buffer = { string.format([[ 
       <s:element name="%s">
         <s:complexType>
@@ -128,15 +131,20 @@ end
 
 ---------------------------------------------------------------------
 local function wsdl_gen_message(desc)
+	local in_params, out_params = "", ""
+	if desc.message.name then
+		in_params = '\n    <wsdl:part name="parameters" element="tns:'
+			..desc.message.name..'" />\n  '
+	end
+	if desc.response.name then
+		out_params = '\n    <wsdl:part name="parameters" element="tns:'
+			..desc.response.name..'" />\n  '
+	end
 	return string.format([[ 
-  <wsdl:message name="%sSoapIn">
-    <wsdl:part name="parameters" element="tns:%s" />
-  </wsdl:message>
-  <wsdl:message name="%sSoapOut">
-    <wsdl:part name="parameters" element="tns:%s" />
-  </wsdl:message>]],
-		desc.name, desc.message.name,
-		desc.name, desc.response.name)
+  <wsdl:message name="%sSoapIn">%s</wsdl:message>
+  <wsdl:message name="%sSoapOut">%s</wsdl:message>]],
+		desc.name, in_params,
+		desc.name, out_params)
 end
 
 ---------------------------------------------------------------------
@@ -165,6 +173,17 @@ local function wsdl_gen_binding(desc)
 end
 
 ---------------------------------------------------------------------
+local function wsdl_gen_http_binding(desc)
+	return string.format([[ 
+    <wsdl:operation name="%s">
+      <http:operation location="/%s"/>
+      <wsdl:input><mime:content type="application/x-www-form-urlencoded"/></wsdl:input>
+      <wsdl:output><mime:mimeXml part="Body"/></wsdl:output>
+    </wsdl:operation>]],
+		desc.name, desc.name)
+end
+
+---------------------------------------------------------------------
 function generate_wsdl()
 	local buffer = {
 		xml_header,
@@ -172,6 +191,7 @@ function generate_wsdl()
 <wsdl:definitions
 	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
 	xmlns:s="http://www.w3.org/2001/XMLSchema"
 	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
 	xmlns:tns="%s"
@@ -207,40 +227,72 @@ function generate_wsdl()
 	---------------------------------------------
 	table.insert(buffer, string.format([[ 
   <wsdl:portType name="%sServiceSoap">]], __service.name))
-
 	for _, method in pairs(__methods) do
 		if type(method) == "table" then
 			table.insert(buffer, method.wsdl_port_type)
 		end
 	end
+	table.insert(buffer, "\n  </wsdl:portType>")
 
-	table.insert(buffer, [[
-  </wsdl:portType>]])
+	table.insert(buffer, string.format([[ 
+  <wsdl:portType name="%sServiceHttpPost">]], __service.name))
+	for _, method in pairs(__methods) do
+		if type(method) == "table" then
+			table.insert(buffer, (method.wsdl_port_type:gsub("Soap", "HttpPost")))
+		end
+	end
+	table.insert(buffer, "\n  </wsdl:portType>")
 
 	-- binding
 	---------------------------------------------
+	-- Soap
 	table.insert(buffer, string.format([[ 
-  <wsdl:binding name="%sServiceSoapBind" type="tns:%sServiceSoap">
+  <wsdl:binding name="%sServiceSoap" type="tns:%sServiceSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />]],
     	__service.name, __service.name))
-
 	for _, method in pairs(__methods) do
 		if type(method) == "table" then
 			table.insert(buffer, method.wsdl_binding)
 		end
 	end
-
-	table.insert(buffer, [[ 
-  </wsdl:binding>]])
+	table.insert(buffer, "  </wsdl:binding>")
+	-- Soap12
+	table.insert(buffer, string.format([[ 
+  <wsdl:binding name="%sServiceSoap12" type="tns:%sServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />]],
+    	__service.name, __service.name))
+	for _, method in pairs(__methods) do
+		if type(method) == "table" then
+			table.insert(buffer, (method.wsdl_binding:gsub("<soap:", "<soap12:")))
+		end
+	end
+	table.insert(buffer, "  </wsdl:binding>")
+	-- HttpPost
+	table.insert(buffer, string.format([[ 
+  <wsdl:binding name="%sServiceHttpPost" type="tns:%sServiceHttpPost">
+    <http:binding verb="POST"/>]],
+    	__service.name, __service.name))
+	for _, method in pairs(__methods) do
+		if type(method) == "table" then
+			table.insert(buffer, method.wsdl_http_binding)
+		end
+	end
+	table.insert(buffer, "  </wsdl:binding>")
 
 	-- service
 	---------------------------------------------
 	table.insert(buffer, string.format([[ 
   <wsdl:service name="%sService">
-    <wsdl:port name="%sServiceSoap" binding="tns:%sServiceSoapBind">
+    <wsdl:port name="%sServiceSoap" binding="tns:%sServiceSoap">
       <soap:address location="%s" />
     </wsdl:port>
-  </wsdl:service>]], __service.name, __service.name, __service.name, __service.url))
+    <wsdl:port name="%sServiceSoap12" binding="tns:%sServiceSoap12">
+      <soap12:address location="%s" />
+    </wsdl:port>
+    <wsdl:port name="%sServiceHttpPost" binding="tns:%sServiceHttpPost">
+      <http:address location="%s" />
+    </wsdl:port>
+  </wsdl:service>]], __service.name, __service.name, __service.name, __service.url, __service.name, __service.name, __service.url, __service.name, __service.name, __service.url))
 
 	table.insert(buffer, [[ 
 </wsdl:definitions>]])
@@ -287,6 +339,7 @@ function export(desc)
 		wsdl_message = wsdl_gen_message(desc),
 		wsdl_port_type = wsdl_gen_port_type(desc),
 		wsdl_binding = wsdl_gen_binding(desc),
+		wsdl_http_binding = wsdl_gen_http_binding(desc),
 
 		method = function (...) -- ( namespace, unpack(arguments) )
 			local res = desc.method(...)

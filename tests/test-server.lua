@@ -75,7 +75,7 @@ local disco = string.format([=[<?xml version="1.0" encoding="iso-8859-1" ?>
 	xmlns="http://schemas.xmlsoap.org/disco/soap/" />
 </discovery>]=], script, script, script)
 
-server.register_service_info("totalizaProd",
+server.register_service_info("listaImagensGaleria",
 	namespace,
 	script, nil, disco)
 
