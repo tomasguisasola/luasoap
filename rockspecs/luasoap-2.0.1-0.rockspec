@@ -3,8 +3,8 @@ version = "2.0.1-0"
 
 source = {
 url = "",
-   --url="http://www.tecgraf.puc-rio.br/~tomas/luasoap/luasoap-2.0.1-0.tar.gz",
-   --md5="4209678b8c5c179bfc7acae5048eb121",
+   url="http://github.com/downloads/tomasguisasola/luasoap/luasoap-2.0.1.tar.gz",
+   md5="ebac9d3a04a845765d498907a71429c2",
 }
 
 description = {
