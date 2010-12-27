@@ -1,7 +1,7 @@
 # $Id: Makefile,v 1.13 2009/07/22 19:02:46 tomas Exp $
 #
 
-VERSION=2.0.1
+VERSION=2.0.2
 
 LUA_DIR= /usr/local/share/lua/5.1
 INSTALL_DIR= $(LUA_DIR)/soap
@@ -22,5 +22,5 @@ uninstall:
 	rm -rf $(INSTALL_DIR)
 
 dist:
-	cd ..; tar czf luasoap-$(VERSION).tar.gz luasoap-$(VERSION) --exclude .git
+	cd ..; tar czf luasoap-$(VERSION).tar.gz luasoap-$(VERSION) --exclude .git --exclude rockspecs
 	echo Created ../luasoap-$(VERSION).tar.gz
