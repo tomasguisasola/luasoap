@@ -4,7 +4,7 @@ version = "2.0.2-1"
 source = {
 url = "",
    url="http://github.com/downloads/tomasguisasola/luasoap/luasoap-2.0.2.tar.gz",
-   md5="",
+   md5="3aafa06f3a65e65f4ee08e12b89ec583",
 }
 
 description = {
