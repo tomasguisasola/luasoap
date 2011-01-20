@@ -220,16 +220,13 @@ local tests = {
 </soap:Envelope>]]
 },
 
-local escape1 = "<this should be escaped>"
-local escape2 = '"this should also be &escaped"'
-escape1 = escape1:gsub("<", "&lt;"):gsub(">", "&gt;")
-escape2 = escape2:gsub("&", "&amp;"):gsub('"', "&quot;")
 {
 	namespace = nil,
 	method = "StringEscapingTest",
 	entries = {
-		{ tag = "string", escape1, },
-		{ tag = "string", escape2, },
+		{ tag = "string", "<this should be escaped>", },
+		{ tag = "string", '"this should also be &escaped"', },
+		{ tag = "string", 'do not re-escape my &amp;', },
 	},
 	xml = [[
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
@@ -237,13 +234,17 @@ escape2 = escape2:gsub("&", "&amp;"):gsub('"', "&quot;")
 		<StringEscapingTest>
 			<string>&lt;this should be escaped&gt;</string>
 			<string>&quot;this should also be &amp;escaped&quot;</string>
+			<string>do not re-escape my &amp;</string>
 		</StringEscapingTest>
 	</soap:Body>
 </soap:Envelope>]]
 },
 
 }
-
+local escape1 = "<this should be escaped>"
+local escape2 = '"this should also be &escaped"'
+escape1 = escape1:gsub("<", "&lt;"):gsub(">", "&gt;")
+escape2 = escape2:gsub("&", "&amp;"):gsub('"', "&quot;")
 for i, t in ipairs(tests) do
 	io.write(i..": "); io.flush()
 	local s = soap.encode (t)
