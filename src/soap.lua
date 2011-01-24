@@ -168,20 +168,12 @@ function encode (args)
 	return serialize (envelope_template)
 end
 
---
--- Find the first child with a tag.
--- Usefull to ignore white spaces.
--- @param obj Table with XML elements (LOM structure).
--- return Table (LOM structure) of the first child.
-local function find_first_child(obj)
-    for _,o in ipairs(obj) do
-        if type(o) == "table" and obj.tag then
-            return o
-        end
-    end
-end
 
--- Finds the index-th child with a tag.
+--
+-- Find the index-th child with a tag.
+-- Useful to ignore white spaces.
+-- @param obj Table with XML elements (LOM structure).
+-- return Table (LOM structure) of the index-th child.
 local function find_child(obj, index)
     index = index or 1
 	  local count = 0
@@ -206,7 +198,7 @@ function decode (doc)
 	assert (obj.tag == ns..":Envelope", "Not a SOAP Envelope: "..
 		tostring(obj.tag))
 	local namespace = find_xmlns (obj.attr)
-	local o = find_first_child(obj)
+	local o = find_child(obj, 1)
 
 	-- ignore SOAP-ENV:Header
 	if o.tag == ns..":Header" or o.tag == "SOAP-ENV:Header" then
@@ -214,7 +206,7 @@ function decode (doc)
 	end
 
 	if o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body" then
-		obj = find_first_child(o)
+		obj = find_child(o, 1)
 	else
 		error ("Couldn't find SOAP Body!")
 	end
