@@ -4,7 +4,7 @@
 -- $Id: soap.lua,v 1.9 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
-local assert, ipairs, pairs, tonumber, tostring, type = assert, ipairs, pairs, tonumber, tostring, type
+local assert, error, ipairs, pairs, tonumber, tostring, type = assert, error, ipairs, pairs, tonumber, tostring, type
 require"table"
 local tconcat, tinsert, tremove = table.concat, table.insert, table.remove
 require"string"
@@ -181,6 +181,19 @@ local function find_first_child(obj)
     end
 end
 
+-- Finds the index-th child with a tag.
+local function find_child(obj, index)
+    index = index or 1
+	  local count = 0
+	  for _, o in ipairs(obj) do
+        if type(o) == "table" and obj.tag then
+			      count = count + 1
+			      if count == index then
+				        return o
+			      end
+		    end
+		end
+end
 ---------------------------------------------------------------------
 -- Converts a SOAP message into Lua objects.
 -- @param doc String with SOAP document.
@@ -194,6 +207,12 @@ function decode (doc)
 		tostring(obj.tag))
 	local namespace = find_xmlns (obj.attr)
 	local o = find_first_child(obj)
+
+	-- ignore SOAP-ENV:Header
+	if o.tag == ns..":Header" or o.tag == "SOAP-ENV:Header" then
+		o = find_child(obj, 2)
+	end
+
 	if o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body" then
 		obj = find_first_child(o)
 	else
