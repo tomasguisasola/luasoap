@@ -145,11 +145,14 @@ which shows some common use cases.</p>
 
 <h4>Encoding and special characters</h4>
 
-<p>It is the programmer's responsibility to provide valid data to
-represent SOAP elements.
+<p>
+Since LuaSOAP 3.0, the library took the responsibility to escape data
+inside SOAP elements (<code>entries</code> field of soap envelope; see
+function <a href="#encode">soap.encode</a> below).
 Therefore, XML special characters such as <code>&lt;</code> and
-<code>&gt;</code> must be converted to the corresponding XML entities
-(<code>&amp;lt;</code> and <code>&amp;gt;</code>, respectively).</p>
+<code>&gt;</code> are automatically converted to the corresponding XML
+entities (<code>&amp;lt;</code> and <code>&amp;gt;</code>, respectively).
+</p>
 
 <p>This documentation provides a <a href="examples.html#escape_example">detailed example</a>
 which shows some common use cases.</p>
@@ -218,7 +221,7 @@ The following function is provided:</p>
   a table with the contents of the SOAP Body.</li>
 </ul>
 
-<h4><a name="https"></a>HTTPS and SOAP over others transport layers</h4>
+<h4><a name="https"></a>HTTPS and SOAP over other transport layers</h4>
 
 <p>An additional optional module <code>soap.client.https</code> provides the
 hability to send and receive SOAP messages over an HTTPS connection.

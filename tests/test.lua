@@ -225,7 +225,7 @@ local tests = {
 	namespace = nil,
 		method = "StringEscapingTest",
 	entries = {
-		{ tag = "string", "<this was automatically escaped>", },
+		{ tag = "string", "<this was automatically escaped", },
 		{ tag = "string", '"this was also &automatically &escaped"', },
 		{ tag = "string", 'do not re-escape my &amp;', },
 	},
@@ -233,7 +233,7 @@ local tests = {
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
 	<soap:Body>
 		<StringEscapingTest>
-			<string>&lt;this was automatically escaped&gt;</string>
+			<string>&lt;this was automatically escaped</string>
 			<string>&quot;this was also &amp;automatically &amp;escaped&quot;</string>
 			<string>do not re-escape my &amp;</string>
 		</StringEscapingTest>

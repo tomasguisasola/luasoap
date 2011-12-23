@@ -115,15 +115,11 @@ local structured_attr = {
 Below is an example of a simple way of escaping strings that contain special characters.  Careful must be taken to non-ASCII characters since they have to be converted according to the locale/encoding.
 
 <pre class="example">
-local str1 = "&lt;should be escaped&gt;"
-local str2 = '"should also be &amp;escaped"'
-local escaped1 = str1:gsub("&lt;", "&amp;lt;"):gsub("&gt;", "&amp;gt;")
-local escaped2 = str2:gsub("&amp;", "&amp;amp;"):gsub('"', "&amp;quot;")
 local escaped_element = {
 	tag = "StringEscapingTest",
-	{ tag = "string", escaped1, },
-	{ tag = "string", escaped2, },
-} --&gt; &lt;StringEscapingTest&gt;&lt;string&gt;&amp;lt;should be escaped&amp;gt;&lt;/string&gt;&lt;string&gt;&amp;quot;should also be &amp;amp;escaped&amp;quot;&lt;/string&gt;&lt;/StringEscapingTest&gt;
+	{ tag = "string", "&lt;this was automatically escaped", },
+	{ tag = "string", 'do not re-escape my &amp;', },
+} --&gt; &lt;StringEscapingTest&gt;&lt;string&gt;&amp;lt;this was automatically escaped&amp;gt;&lt;/string&gt;&lt;string&gt;do not re-escape my &amp;amp;&lt;/string&gt;&lt;/StringEscapingTest&gt;
 </pre>
 
 <a name="client_example"></a> 
@@ -134,8 +130,8 @@ client application.
 Note that the external tag might not be provided in the <code>entries</code> table, since the <code>method</code> field will be used for that purpose.
 
 <pre class="example">
-require "soap.client"
-local ns, meth, ent = soap.client.call {
+local client = require "soap.client"
+local ns, meth, ent = client.call {
 	url = "http://soap.4s4c.com/ssss4c/soap.asp", 
 	soapaction = "doubler",
 	method = "http://simon.fell.com/calc",

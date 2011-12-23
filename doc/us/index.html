@@ -79,7 +79,7 @@ to handle XML documents.</p>
 
 <h2><a name="status"></a>Status</h2>
 
-<p>Current version is 2.0.2. It was developed for Lua 5.1.</p>
+<p>Current version is 3.0. It was developed for Lua 5.X.</p>
 
 
 <h2><a name="download"></a>Download</h2>
@@ -87,12 +87,23 @@ to handle XML documents.</p>
 <p>
 LuaSOAP can be downloaded in source code from its
 <a href="http://luaforge.net/project/showfiles.php?group_id=15">LuaForge</a> page.
+LuaSOAP can also be installed via <a href="http://luarocks.org">LuaRocks</a> with the following command line:
 </p>
+<code>luarocks install luasoap</code>
 
 
 <h2><a name="history"></a>History</h2>
 
 <dl class="history">
+    <dt><strong>LuaSOAP 3.0</strong> [??/??/201?]</dt>
+    <dd>
+    <ul>
+        <li>Addition of automatic escaping of special characters (thanks to Seth Behunin)</li>
+        <li>Bug correction: ignoring soap:Header while decoding soap message (thanks to Humberto Anjos)</li>
+        <li>Reimplementation to make it work in all Lua 5.X versions</li>
+    </ul>
+    </dd>
+
     <dt><strong>LuaSOAP 2.0.2</strong> [27/Dec/2010]</dt>
     <dd>
     <ul>
