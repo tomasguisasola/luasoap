@@ -1,7 +1,7 @@
 # $Id: Makefile,v 1.13 2009/07/22 19:02:46 tomas Exp $
 #
 
-VERSION=2.0.2
+VERSION=3.0
 
 LUA_DIR= /usr/local/share/lua/5.1
 INSTALL_DIR= $(LUA_DIR)/soap
