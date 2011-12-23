@@ -83,7 +83,7 @@ end
 return {
 	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
-	_VERSION = "LuaSOAP 2.1.0 client",
+	_VERSION = "LuaSOAP 3.0 client",
 
 	call = call,
 	-- Support for SOAP over HTTP is default and only depends on LuaSocket

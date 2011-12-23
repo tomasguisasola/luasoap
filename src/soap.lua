@@ -4,15 +4,43 @@
 -- $Id: soap.lua,v 1.9 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
-local assert, ipairs, pairs, tonumber, tostring, type = assert, ipairs, pairs, tonumber, tostring, type
+local assert, error, pairs, tonumber, tostring, type = assert, error, pairs, tonumber, tostring, type
 local table = require"table"
 local tconcat, tinsert, tremove = table.concat, table.insert, table.remove
 local string = require"string"
-local strfind, format = string.find, string.format
+local gsub, strfind, strformat = string.gsub, string.find, string.format
 local max = require"math".max
 local lom = require"lxp.lom"
 local parse = lom.parse
 
+
+local tescape = {
+	['&'] = '&amp;',
+	['<'] = '&lt;',
+	['>'] = '&gt;',
+	['"'] = '&quot;',
+	["'"] = '&apos;',
+}
+---------------------------------------------------------------------
+-- Escape special characters.
+---------------------------------------------------------------------
+local function escape (text)
+	return (gsub (text, "([&<>'\"])", tescape))
+end
+
+local tunescape = {
+	['&amp;'] = '&',
+	['&lt;'] = '<',
+	['&gt;'] = '>',
+	['&quot;'] = '"',
+	['&apos;'] = "'",
+}
+---------------------------------------------------------------------
+-- Unescape special characters.
+---------------------------------------------------------------------
+local function unescape (text)
+	return (gsub (text, "(&%a+%;)", tunescape))
+end
 
 local serialize
 
@@ -27,12 +55,13 @@ local function attrs (a)
 	else
 		local c = {}
 		if a[1] then
-			for i, v in ipairs (a) do
-				tinsert (c, format ("%s=%q", v, a[v]))
+			for i = 1, #a do
+				local v = a[i]
+				c[i] = strformat ("%s=%q", v, a[v])
 			end
 		else
 			for i, v in pairs (a) do
-				tinsert (c, format ("%s=%q", i, v))
+				c[#c+1] = strformat ("%s=%q", i, v)
 			end
 		end
 		if #c > 0 then
@@ -53,8 +82,8 @@ local function contents (obj)
 		return ""
 	else
 		local c = {}
-		for i, v in ipairs (obj) do
-			c[i] = serialize (v)
+		for i = 1, #obj do
+			c[i] = serialize (obj[i])
 		end
 		return tconcat (c)
 	end
@@ -67,12 +96,14 @@ end
 ---------------------------------------------------------------------
 serialize = function (obj)
 	local tt = type(obj)
-	if tt == "string" or tt == "number" then
+	if tt == "string" then
+		return escape(unescape(obj))
+	elseif tt == "number" then
 		return obj
 	elseif tt == "table" then
 		local t = obj.tag
 		assert (t, "Invalid table format (no `tag' field)")
-		return format ("<%s%s>%s</%s>", t, attrs(obj.attr), contents(obj), t)
+		return strformat ("<%s%s>%s</%s>", t, attrs(obj.attr), contents(obj), t)
 	else
 		return ""
 	end
@@ -163,17 +194,28 @@ local function encode (args)
 	return serialize (envelope_template)
 end
 
---
--- Find the first child with a tag.
--- Usefull to ignore white spaces.
--- @param obj Table with XML elements (LOM structure).
--- return Table (LOM structure) of the first child.
-local function find_first_child(obj)
-    for _,o in ipairs(obj) do
-        if type(o) == "table" and obj.tag then
-            return o
-        end
-    end
+-- Iterates over the children of an object.
+-- It will ignore any text, so if you want all of the elements, use ipairs(obj).
+-- @param obj Table (LOM format) representing the XML object.
+-- @param tag String with the matching tag of the children
+--	or nil to match only structured children (single strings are skipped).
+-- @return Function to iterate over the children of the object
+--	which returns each matching child.
+
+local function list_children (obj, tag)
+	local i = 0
+	return function ()
+		i = i+1
+		local v = obj[i]
+		while v do
+			if type(v) == "table" and (not tag or v.tag == tag) then
+				return v
+			end
+			i = i+1
+			v = self[i]
+		end
+		return nil
+	end
 end
 
 ---------------------------------------------------------------------
@@ -188,17 +230,22 @@ local function decode (doc)
 	assert (obj.tag == ns..":Envelope", "Not a SOAP Envelope: "..
 		tostring(obj.tag))
 	local namespace = find_xmlns (obj.attr)
-	local o = find_first_child(obj)
+	local lc = list_children (obj)
+	local o = lc ()
+	-- Skip SOAP:Header
+	while o and o.tag ~= ns..":Header" and o.tag ~= "SOAP-ENV:Header" do
+		o = lc ()
+	end
 	if o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body" then
-		obj = find_first_child(o)
+		obj = list_children (o)
 	else
 		error ("Couldn't find SOAP Body!")
 	end
 	local method = obj.tag:match ("%:([^:]*)$") or obj.tag
 
 	local entries = {}
-	for i, el in ipairs (obj) do
-		entries[i] = el
+	for i = 1, #obj do
+		entries[i] = obj[i]
 	end
 	return namespace, method, entries
 end
@@ -207,8 +254,11 @@ end
 return {
 	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
-	_VERSION = "LuaSOAP 2.1.1",
+	_VERSION = "LuaSOAP 3.0",
 
 	decode = decode,
 	encode = encode,
+	escape = escape,
+	unescape = unescape,
+	serialize = serialize,
 }

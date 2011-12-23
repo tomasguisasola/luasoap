@@ -24,10 +24,6 @@ function table.equal (t1, t2)
 	return true
 end
 
-local escape1 = "<this should be escaped>"
-local escape2 = '"this should also be &escaped"'
-escape1 = escape1:gsub("<", "&lt;"):gsub(">", "&gt;")
-escape2 = escape2:gsub("&", "&amp;"):gsub('"', "&quot;")
 
 local tests = {
 {
@@ -227,17 +223,19 @@ local tests = {
 
 {
 	namespace = nil,
-	method = "StringEscapingTest",
+		method = "StringEscapingTest",
 	entries = {
-		{ tag = "string", escape1, },
-		{ tag = "string", escape2, },
+		{ tag = "string", "<this was automatically escaped>", },
+		{ tag = "string", '"this was also &automatically &escaped"', },
+		{ tag = "string", 'do not re-escape my &amp;', },
 	},
 	xml = [[
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
 	<soap:Body>
 		<StringEscapingTest>
-			<string>&lt;this should be escaped&gt;</string>
-			<string>&quot;this should also be &amp;escaped&quot;</string>
+			<string>&lt;this was automatically escaped&gt;</string>
+			<string>&quot;this was also &amp;automatically &amp;escaped&quot;</string>
+			<string>do not re-escape my &amp;</string>
 		</StringEscapingTest>
 	</soap:Body>
 </soap:Envelope>]]
@@ -246,13 +244,14 @@ local tests = {
 }
 
 for i, t in ipairs(tests) do
-	io.write(i..": "); io.flush()
 	local s = soap.encode (t)
 	s = string.gsub (s, "[\n\r\t]", "")
-	local ds = assert (lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..s))
+	local ok, err = lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..s)
+	local ds = assert (ok, (err or '').."\non test #"..i..": "..t.method..'\n'..s)
+
 	t.xml = string.gsub (t.xml, "[\n\r\t]", "")
-	local dx = assert (lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml))
+	local ok, err = lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml)
+	local dx = assert (ok, (err or '').."\non test #"..i..": "..t.method..'\n'..t.xml..'\n'..s)
 	assert (table.equal (ds, dx))
-	io.write"\r"
 end
-print"Ok!"
+print(soap._VERSION, "Ok!")
