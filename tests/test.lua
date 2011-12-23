@@ -24,6 +24,11 @@ function table.equal (t1, t2)
 	return true
 end
 
+local escape1 = "<this should be escaped>"
+local escape2 = '"this should also be &escaped"'
+escape1 = escape1:gsub("<", "&lt;"):gsub(">", "&gt;")
+escape2 = escape2:gsub("&", "&amp;"):gsub('"', "&quot;")
+
 local tests = {
 {
 	namespace = "Some-URI",
@@ -220,10 +225,6 @@ local tests = {
 </soap:Envelope>]]
 },
 
-local escape1 = "<this should be escaped>"
-local escape2 = '"this should also be &escaped"'
-escape1 = escape1:gsub("<", "&lt;"):gsub(">", "&gt;")
-escape2 = escape2:gsub("&", "&amp;"):gsub('"', "&quot;")
 {
 	namespace = nil,
 	method = "StringEscapingTest",

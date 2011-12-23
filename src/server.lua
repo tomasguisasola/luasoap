@@ -10,11 +10,6 @@ local string = require"string"
 local cgilua = cgilua
 local soap = require"soap"
 
-module("soap.server")
-
-_COPYRIGHT = "Copyright (C) 2004-2010 Kepler Project"
-_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
-_VERSION = "LuaSOAP 2.0.1 service helping functions"
 
 local encoding = "iso-8859-1"
 local xml_header = '<?xml version="1.0" encoding="'..encoding..'"?>\n'
@@ -51,7 +46,7 @@ local function respond(resp, header)
 end
 
 ---------------------------------------------------------------------
-function builderrorenvelope(faultcode, faultstring, extra)
+local function builderrorenvelope(faultcode, faultstring, extra)
 	faultstring = faultstring:gsub("([<>])", { ["<"] = "&lt;", [">"] = "&gt;", })
 	return soap.encode({
 		entries = {
@@ -184,7 +179,7 @@ local function wsdl_gen_http_binding(desc)
 end
 
 ---------------------------------------------------------------------
-function generate_wsdl()
+local function generate_wsdl()
 	local buffer = {
 		xml_header,
 		string.format([[
@@ -301,7 +296,7 @@ function generate_wsdl()
 end
 
 ---------------------------------------------------------------------
-function generate_disco()
+local function generate_disco()
 	return xml_header.."<discovery></discovery>"
 
 end
@@ -315,7 +310,7 @@ end
 -- @param wsdl String with a WSDL response message (optional)
 -- @param disco String with a discovery response message (optional)
 ---------------------------------------------------------------------
-function register_service_info(name, namespace, url, wsdl, disco)
+local function register_service_info(name, namespace, url, wsdl, disco)
 	__service.name = name
 	__service.namespace = namespace
 	__service.url = url
@@ -329,7 +324,7 @@ end
 -- Exports methods that can be used by the server.
 -- @param desc Table with the method description.
 ---------------------------------------------------------------------
-function export(desc)
+local function export(desc)
 	desc.response.name = desc.response.name or desc.message.name.."Response"
 
 	__methods[desc.name] = {
@@ -349,11 +344,18 @@ function export(desc)
 end
 
 ---------------------------------------------------------------------
+local function fatalerrorfunction(msg)
+	respond(builderrorenvelope("soap:ServerError", msg))
+end
+
+---------------------------------------------------------------------
 -- Handles the request received by the calling script.
 -- @param postdata String with POST data from the server.
 -- @param querystring String with the query string.
 ---------------------------------------------------------------------
-function handle_request(postdata, querystring)
+local function handle_request(postdata, querystring)
+	cgilua.seterroroutput(fatalerrorfunction)
+
 	local namespace, func, arg_table
 	local header
 	if postdata then
@@ -380,8 +382,15 @@ function handle_request(postdata, querystring)
 end
 
 ---------------------------------------------------------------------
-local function fatalerrorfunction(msg)
-	respond(builderrorenvelope("soap:ServerError", msg))
-end
-cgilua.seterroroutput(fatalerrorfunction)
+return {
+	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
+	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
+	_VERSION = "LuaSOAP 2.1.0 service helping functions",
 
+	builderrorenvelope = builderrorenvelope,
+	export = export,
+	generate_disco = generate_disco,
+	generate_wsdl = generate_wsdl,
+	handle_request = handle_request,
+	register_service_info = register_service_info,
+}

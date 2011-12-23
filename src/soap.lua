@@ -5,19 +5,14 @@
 ---------------------------------------------------------------------
 
 local assert, ipairs, pairs, tonumber, tostring, type = assert, ipairs, pairs, tonumber, tostring, type
-require"table"
+local table = require"table"
 local tconcat, tinsert, tremove = table.concat, table.insert, table.remove
-require"string"
+local string = require"string"
 local strfind, format = string.find, string.format
 local max = require"math".max
-require"lxp.lom"
-local parse = lxp.lom.parse
+local lom = require"lxp.lom"
+local parse = lom.parse
 
-module (...)
-
-_COPYRIGHT = "Copyright (C) 2004-2010 Kepler Project"
-_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
-_VERSION = "LuaSOAP 2.0.1"
 
 local serialize
 
@@ -144,7 +139,7 @@ local xmlns_soap12 = "http://www.w3.org/2003/05/soap-envelope"
 -- soapversion: Number of SOAP version (default = 1.1);
 -- @return String with SOAP envelope element.
 ---------------------------------------------------------------------
-function encode (args)
+local function encode (args)
 	if tonumber(args.soapversion) == 1.2 then
 		envelope_template.attr["xmlns:soap"] = xmlns_soap12
 	else
@@ -187,7 +182,7 @@ end
 -- @return String with namespace, String with method's name and
 --	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
-function decode (doc)
+local function decode (doc)
 	local obj = assert (parse (doc))
 	local ns = obj.tag:match ("^(.-):")
 	assert (obj.tag == ns..":Envelope", "Not a SOAP Envelope: "..
@@ -207,3 +202,13 @@ function decode (doc)
 	end
 	return namespace, method, entries
 end
+
+---------------------------------------------------------------------
+return {
+	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
+	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
+	_VERSION = "LuaSOAP 2.1.1",
+
+	decode = decode,
+	encode = encode,
+}

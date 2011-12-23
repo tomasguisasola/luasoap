@@ -13,16 +13,12 @@ local ltn12 = require("ltn12")
 local socket_http = require("socket.http")
 local soap = require("soap")
 
-module(...)
 
 local xml_header = '<?xml version="1.0"?>'
 
 local mandatory_soapaction = "Field `soapaction' is mandatory for SOAP 1.1 (or you can force SOAP version with `soapversion' field)"
 local mandatory_url = "Field `url' is mandatory"
 local invalid_args = "Supported SOAP versions: 1.1 and 1.2.  The presence of soapaction field is mandatory for SOAP version 1.1.\nsoapversion, soapaction = "
-
--- Support for SOAP over HTTP is default and only depends on LuaSocket
-http = socket_http
 
 ---------------------------------------------------------------------
 -- Call a remote method.
@@ -39,7 +35,7 @@ http = socket_http
 -- @return String with namespace, String with method's name and
 --	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
-function call(args)
+local function call(args)
 	local soap_action, content_type_header
 	if (not args.soapversion) or tonumber(args.soapversion) == 1.1 then
 		soap_action = '"'..assert(args.soapaction, mandatory_soapaction)..'"'
@@ -83,3 +79,13 @@ function call(args)
 	return error_or_ns, method, result
 end
 
+---------------------------------------------------------------------
+return {
+	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
+	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
+	_VERSION = "LuaSOAP 2.1.0 client",
+
+	call = call,
+	-- Support for SOAP over HTTP is default and only depends on LuaSocket
+	http = socket_http
+}
