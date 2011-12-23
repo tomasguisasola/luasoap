@@ -44,6 +44,36 @@ local function attrs (a)
 end
 
 ---------------------------------------------------------------------
+-- Escape xml escape characters in a string
+-- @param text String to escape characters in.
+-- @return String with escape characters replaced with escape codes.
+---------------------------------------------------------------------
+function escape(text)
+	local escaped_text = text:gsub('&', '&amp;')
+	escaped_text = escaped_text:gsub("'", '&apos;')
+	escaped_text = escaped_text:gsub('"', '&quot;')
+	escaped_text = escaped_text:gsub('>', '&gt;')
+	escaped_text = escaped_text:gsub('<', '&lt;')
+	
+	return escaped_text
+end
+
+---------------------------------------------------------------------
+-- Unescape xml unescape characters in a string
+-- @param text String to unescape characters in.
+-- @return String with escape codes replaced with escape characters.
+---------------------------------------------------------------------
+function unescape(text)
+	local unescaped_text = text:gsub('&amp;', '&')
+	unescaped_text = unescaped_text:gsub('&apos;', "'")
+	unescaped_text = unescaped_text:gsub('&quot;', '"')
+	unescaped_text = unescaped_text:gsub('&gt;', '>')
+	unescaped_text = unescaped_text:gsub('&lt;', '<')
+		
+	return unescaped_text
+end
+
+---------------------------------------------------------------------
 -- Serialize the children of an object.
 -- @param obj Table with the object to be serialized.
 -- @return String representation of the children.
@@ -67,7 +97,11 @@ end
 ---------------------------------------------------------------------
 serialize = function (obj)
 	local tt = type(obj)
-	if tt == "string" or tt == "number" then
+	if tt == "string" then
+		obj = unescape(obj)
+		obj = escape(obj)
+		return obj
+	elseif tt == "number" then
 		return obj
 	elseif tt == "table" then
 		local t = obj.tag
