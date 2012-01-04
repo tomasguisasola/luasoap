@@ -83,10 +83,11 @@ It enables a Lua program to:</p>
 XML avoiding manipulation of string representation of data
 structures.</p>
 
-<p>LuaSOAP is based on <a href="http://www.keplerproject.org/luaexpat">LuaExpat</a> and on 
+<p>LuaSOAP is based on
+<a href="http://matthewwild.co.uk/projects/luaexpat/">LuaExpat</a> and on 
 <a href="http://www.lua.org">Lua 5.1</a>.
 The abstraction layer over HTTP depends on 
-<a href="http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.
+<a href="http://w3.impa.br/~diego/software/luasocket/">LuaSocket 2.0</a>.
 An optional layer over HTTPS depends on
 <a href="http://www.inf.puc-rio.br/~brunoos/luasec/">LuaSec 0.4</a>.
 </p>
@@ -114,9 +115,9 @@ You can check the available rocks in the <a href="http://luarocks.org/repositori
 
 <p>SOAP elements are always represented by Lua tables except
 strings. A SOAP element is a table of the form defined by the <a
-href="http://www.keplerproject.org/luaexpat/lom.html">Lua Object
+href="http://matthewwild.co.uk/projects/luaexpat/lom.html">Lua Object
 Model</a> from the <a href=
-"http://www.keplerproject.org/luaexpat">LuaExpat</a> library. The
+"http://matthewwild.co.uk/projects/luaexpat/">LuaExpat</a> library. The
 table has the following characteristics:</p>
 
 <ul>
@@ -198,7 +199,7 @@ string or a <a href="#soap_elements">SOAP element</a>.
 
 <p>The module <code>soap.client</code> implements a stand-alone client
 which works over HTTP and is based on <a href=
-"http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.
+"http://w3.impa.br/~diego/software/luasocket/">LuaSocket 2.0</a>.
 The following function is provided:</p>
 
 <ul>
@@ -231,16 +232,18 @@ In fact, the <code>call</code> function inspects the <code>url</code>
 argument to check over what protocol the SOAP message should be transfered.
 This protocol should be supported through a function
 <code>soap.client.<i>protocol</i></code>, where <i>protocol</i> is a
-function with the same signature of LuaSocket's <code>http.request</code>
+function with the same signature of
+<a href="http://w3.impa.br/~diego/software/luasocket/http.html#request">LuaSocket's <code>http.request</code></a>
 function.
 The <code>soap.client.http</code> is this exact function and the
-<code>soap.client.https</code> is LuaSec's <code>https.request</code>
+<code>soap.client.https</code> is
+<a href="http://www.inf.puc-rio.br/~brunoos/luasec/reference.html#request">LuaSec's <code>https.request</code></a>
 function which wraps LuaSocket's <code>http.request</code> over an
 HTTPS connection (this function is available since LuaSec version 0.4).
 </p>
 
-<p><code>soap.client.https</code> module depends of
-<a href="http://luasec.luaforge.net/">LuaSec</a>.</p>
+<p><code>soap.client.https</code> module depends on
+<a href="http://www.inf.puc-rio.br/~brunoos/luasec/">LuaSec</a>.</p>
 
 <p>By following this approach, one could extend LuaSOAP to use another protocol
 by just implementing a function equivalent to LuaSocket's http.request or
