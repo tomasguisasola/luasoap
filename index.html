@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>LuaSOAP: SOAP interface to the Lua programming language</title>
+    <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+
+<div id="container">
+	
+<div id="product">
+	<div id="product_logo"><a href="http://www.keplerproject.org">
+		<img alt="LuaSOAP logo" src="luasoap.png"/>
+	</a></div>
+	<div id="product_name"><big><b>LuaSOAP</b></big></div>
+	<div id="product_description">SOAP interface for the Lua programming language</div>
+</div> <!-- id="product" -->
+
+<div id="main">
+	
+<div id="navigation">
+<h1>LuaSOAP</h1>
+	<ul>
+		<li><strong>Home</strong>
+			<ul>
+				<li><a href="index.html#overview">Overview</a></li>
+				<li><a href="index.html#status">Status</a></li>
+				<li><a href="index.html#download">Download</a></li>
+				<li><a href="index.html#history">History</a></li>
+				<li><a href="index.html#credits">Credits</a></li>
+				<li><a href="index.html#contact">Contact us</a></li>
+			</ul>
+		</li>
+		<li><a href="manual.html">Manual</a>
+			<ul>
+				<li><a href="manual.html#introduction">Introduction</a></li>
+				<li><a href="manual.html#installation">Installation</a></li>
+				<li><a href="manual.html#soap_elements">SOAP elements</a></li>
+				<li><a href="manual.html#basic">Basic support</a> 
+					<ul>
+						<li><a href="manual.html#encode">encode</a></li>
+						<li><a href="manual.html#decode">decode</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#client">Client side</a> 
+					<ul>
+						<li><a href="manual.html#call">call</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#references">References</a></li>
+			</ul>
+		</li>
+		<li><a href="examples.html">Examples</a>
+            <ul>
+                <li><a href="examples.html#soap_elements_example">SOAP elements</a></li>
+                <li><a href="examples.html#escape_example">Escaping example</a></li>
+                <li><a href="examples.html#client_example">Client example</a></li>
+            </ul>
+        </li>
+		<li><a href="license.html">License</a></li>
+	</ul>
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h2><a name="overview"></a>Overview</h2>
+
+<p>LuaSOAP is a library to ease the use of <a href="http://www.w3.org/TR/soap/">SOAP</a>.
+LuaSOAP provides a very simple API that convert
+Lua tables to and from XML documents.
+It uses
+<a href="http://www.keplerproject.org/luaexpat">LuaExpat</a>
+to handle XML documents.</p>
+
+<p>LuaSOAP is free software and uses the same <a href="license.html">license</a> as Lua 5.1.</p>
+
+
+<h2><a name="status"></a>Status</h2>
+
+<p>Current version is 3.0. It was developed for Lua 5.X.</p>
+
+
+<h2><a name="download"></a>Download</h2>
+
+<p>
+LuaSOAP can be downloaded in source code from its
+<a href="http://luaforge.net/project/showfiles.php?group_id=15">LuaForge</a> page.
+LuaSOAP can also be installed via <a href="http://luarocks.org">LuaRocks</a> with the following command line:
+</p>
+<code>luarocks install luasoap</code>
+
+
+<h2><a name="history"></a>History</h2>
+
+<dl class="history">
+    <dt><strong>LuaSOAP 3.0</strong> [??/??/201?]</dt>
+    <dd>
+    <ul>
+        <li>Addition of automatic escaping of special characters (thanks to Seth Behunin)</li>
+        <li>Bug correction: ignoring soap:Header while decoding soap message (thanks to Humberto Anjos)</li>
+        <li>Reimplementation to make it work in all Lua 5.X versions</li>
+    </ul>
+    </dd>
+
+    <dt><strong>LuaSOAP 2.0.2</strong> [27/Dec/2010]</dt>
+    <dd>
+    <ul>
+        <li>Change in the signature of
+<a href="manual.html#encode">soap.encode</a> and
+<a href="manual.html#call">soap.client.call</a></li>
+        <li>Update to SOAP 1.2</li>
+        <li>Added support to HTTPS via
+            <a href="http://luasec.luaforge.net/">LuaSec</a></li>
+        <li>Improved server support</li>
+        <li>Distribution via <a href="http://luarocks.org">LuaRocks</a></li>
+    </ul>
+    </dd>
+
+    <dt><strong>LuaSOAP 1.0 beta</strong> [2/Dec/2004]</dt>
+    <dd>
+    <ul>
+        <li>LuaSOAP follows the
+<a href="http://www.keplerproject.org/compat">package model</a>
+for Lua 5.1 (see section <a href="manual.html#installation">Installation</a>
+for more details).</li>
+    </ul>
+    </dd>
+
+    <dt><strong>LuaSOAP 1.0 alpha</strong> [4/Apr/2004]</dt>
+</dl>
+
+
+
+<h2><a name="credits"></a>Credits</h2>
+
+<p>LuaSOAP was designed by Roberto Ierusalimschy, Andr&eacute;
+Carregal and Tom&aacute;s Guisasola as part of the
+<a href="http://www.keplerproject.org">Kepler Project</a>
+which holds its copyright. It was implemented by Tom&aacute;s Guisasola and Pablo Musa with invaluable contributions from Bruno Silvestre.</p>
+
+<p>LuaSOAP development was sponsored by
+<a href="http://www.puc-rio.br">PUC-Rio</a>,
+<a href="http://www.fabricadigital.com.br">F&aacute;brica Digital</a> and
+FINEP.</p>
+
+
+<h2><a name="contact"></a>Contact us</h2>
+
+<p>For more information please <a href=
+"mailto:info-NO-SPAM-THANKS@keplerproject.org">contact us</a>.
+Comments are welcome!</p>
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+	<p><small>
+	$Id: index.html,v 1.14 2009/07/22 19:02:46 tomas Exp $
+	</small></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->
+
+</body>
+</html> 

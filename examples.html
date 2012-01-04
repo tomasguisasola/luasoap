@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>LuaSOAP: SOAP interface to the Lua programming language</title>
+    <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+
+<div id="container">
+	
+<div id="product">
+	<div id="product_logo"><a href="http://www.keplerproject.org">
+		<img alt="LuaSOAP logo" src="luasoap.png"/>
+	</a></div>
+	<div id="product_name"><big><b>LuaSOAP</b></big></div>
+	<div id="product_description">SOAP interface for the Lua programming language</div>
+</div> <!-- id="product" -->
+
+<div id="main">
+	
+<div id="navigation">
+<h1>LuaSOAP</h1>
+	<ul>
+		<li><a href="index.html">Home</a>
+			<ul>
+				<li><a href="index.html#overview">Overview</a></li>
+				<li><a href="index.html#status">Status</a></li>
+				<li><a href="index.html#download">Download</a></li>
+				<li><a href="index.html#history">History</a></li>
+				<li><a href="index.html#credits">Credits</a></li>
+				<li><a href="index.html#contact">Contact us</a></li>
+			</ul>
+		</li>
+		<li><a href="manual.html">Manual</a>
+			<ul>
+				<li><a href="manual.html#introduction">Introduction</a></li>
+				<li><a href="manual.html#installation">Installation</a></li>
+				<li><a href="manual.html#soap_elements">SOAP elements</a></li>
+				<li><a href="manual.html#basic">Basic support</a> 
+					<ul>
+						<li><a href="manual.html#encode">encode</a></li>
+						<li><a href="manual.html#decode">decode</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#client">Client side</a> 
+					<ul>
+						<li><a href="manual.html#call">call</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#references">References</a></li>
+			</ul>
+		</li>
+		<li><strong>Examples</strong>
+            <ul>
+                <li><a href="#soap_elements_example">SOAP elements</a></li>
+                <li><a href="#escape_example">Escaping example</a></li>
+                <li><a href="#client_example">Client example</a></li>
+            </ul>
+        </li>
+		<li><a href="license.html">License</a></li>
+	</ul>
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+
+<h2><a name="examples"></a>Examples</h2>
+
+<a name="soap_elements_example"></a>
+<h3>SOAP elements</h3>
+
+Follows a small example of common XML constructions written in LuaSOAP.
+
+<pre class="example">
+local simple = { tag = "symbol", "DEF", } --&gt; &lt;symbol&gt;DEF&lt;/symbol&gt;
+
+local simple_attr = {
+	tag = "symbol",
+	anAttribute = "aValue",
+	"DEF",
+} --&gt; &lt;symbol anAttribute="aValue"&gt;DEF&lt;/symbol&gt;
+
+local structured = {
+	tag = "PriceAndVolume",
+	{ tag = "LastTradePrice", 34.5, },
+	{ tag = "DayVolume", 10000, },
+} --&gt; &lt;PriceAndVolume&gt;&lt;LastTradePrice&gt;34.5&lt;/LastTradePrice&gt;&lt;DayVolume&gt;10000&lt;/DayVolume&gt;&lt;/PriceAndVolume&gt;
+
+local structured_attr = {
+	{ tag = "stooges",
+		{
+			tag = "curly",
+			attr = { "xsi:type", ["xsi:type"] = "xsd:int", },
+			-21,
+		},
+		{
+			tag = "larry",
+			attr = { "xsi:type", ["xsi:type"] = "xsd:int", },
+			59,
+		},
+		{
+			tag = "moe",
+			attr = { "xsi:type", ["xsi:type"] = "xsd:int", },
+			11,
+		},
+	},
+} --&gt; &lt;stooges&gt;&lt;curly xsi:type="xsd:int"&gt;-21&lt;/curly&gt;&lt;larry xsi:type="xsd:int"&gt;59&lt;/larry&gt;&lt;moe xsi:type="xsd:int"&gt;11&lt;/moe&gt;&lt;/stooges&gt;
+</pre>
+
+<a name="escape_example"></a>
+<h3>Escaping example</h3>
+
+Below is an example of a simple way of escaping strings that contain special characters.  Careful must be taken to non-ASCII characters since they have to be converted according to the locale/encoding.
+
+<pre class="example">
+local escaped_element = {
+	tag = "StringEscapingTest",
+	{ tag = "string", "&lt;this was automatically escaped", },
+	{ tag = "string", 'do not re-escape my &amp;', },
+} --&gt; &lt;StringEscapingTest&gt;&lt;string&gt;&amp;lt;this was automatically escaped&amp;gt;&lt;/string&gt;&lt;string&gt;do not re-escape my &amp;amp;&lt;/string&gt;&lt;/StringEscapingTest&gt;
+</pre>
+
+<a name="client_example"></a> 
+<h3>Client example</h3>
+
+Below is a small sample code displaying the use of the library in a
+client application. 
+Note that the external tag might not be provided in the <code>entries</code> table, since the <code>method</code> field will be used for that purpose.
+
+<pre class="example">
+local client = require "soap.client"
+local ns, meth, ent = client.call {
+	url = "http://soap.4s4c.com/ssss4c/soap.asp", 
+	soapaction = "doubler",
+	method = "http://simon.fell.com/calc",
+	entries = { -- `tag' will be filled with `method' field
+		{
+			tag = "nums",
+			attr = {
+				["xmlns:SOAP-ENC"] = "http://schemas.xmlsoap.org/soap/encoding/",
+				["SOAP-ENC:arrayType"] = "xsd:int[5]",
+			},
+			{ tag = "number", 10 },
+			{ tag = "number", 20 },
+			{ tag = "number", 30 },
+			{ tag = "number", 50 },
+			{ tag = "number", 100 },
+		},
+	}
+}
+print("namespace = ", ns, "element name = ", meth)
+for i, elem in ipairs (ent[1]) do
+	print (elem[1])
+end
+</pre>
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+	<p><small>
+	$Id: examples.html,v 1.2 2009/07/22 19:02:46 tomas Exp $
+	</small></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->
+
+</body>
+</html> 

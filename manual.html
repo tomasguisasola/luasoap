@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>LuaSOAP: SOAP interface to the Lua programming language</title>
+    <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+
+<div id="container">
+	
+<div id="product">
+	<div id="product_logo"><a href="http://www.keplerproject.org">
+		<img alt="LuaSOAP logo" src="luasoap.png"/>
+	</a></div>
+	<div id="product_name"><big><b>LuaSOAP</b></big></div>
+	<div id="product_description">SOAP interface for the Lua programming language</div>
+</div> <!-- id="product" -->
+
+<div id="main">
+	
+<div id="navigation">
+<h1>LuaSOAP</h1>
+	<ul>
+		<li><a href="index.html">Home</a>
+			<ul>
+				<li><a href="index.html#overview">Overview</a></li>
+				<li><a href="index.html#status">Status</a></li>
+				<li><a href="index.html#download">Download</a></li>
+				<li><a href="index.html#history">History</a></li>
+				<li><a href="index.html#credits">Credits</a></li>
+				<li><a href="index.html#contact">Contact us</a></li>
+			</ul>
+		</li>
+		<li><strong>Manual</strong>
+			<ul>
+				<li><a href="manual.html#introduction">Introduction</a></li>
+				<li><a href="manual.html#installation">Installation</a></li>
+				<li><a href="manual.html#soap_elements">SOAP elements</a></li>
+				<li><a href="manual.html#basic">Basic support</a> 
+					<ul>
+						<li><a href="manual.html#encode">encode</a></li>
+						<li><a href="manual.html#decode">decode</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#client">Client side</a> 
+					<ul>
+						<li><a href="manual.html#call">call</a></li>
+					</ul>
+				</li>
+				<li><a href="manual.html#references">References</a></li>
+			</ul>
+		</li>
+		<li><a href="examples.html">Examples</a>
+            <ul>
+                <li><a href="#soap_elements_example">SOAP elements</a></li>
+                <li><a href="#escape_example">Escaping example</a></li>
+                <li><a href="#client_example">Client example</a></li>
+            </ul>
+        </li>
+		<li><a href="license.html">License</a></li>
+	</ul>
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+
+<h2><a name="introduction"></a>Introduction</h2>
+
+<p>LuaSOAP is a <a href="http://www.lua.org">Lua</a> library to ease the use
+of <a href="http://www.w3.org/TR/2003/REC-soap12-part0-20030624/">SOAP</a>.
+It enables a Lua program to:</p>
+
+<ul>
+    <li>Encode and decode SOAP messages without having to deal directly
+        with XML code </li>
+    <li>Invoke remote Web Services without having to deal directly with
+        SOAP messages </li>
+</ul>
+
+<p>LuaSOAP provides a very simple API and an abstraction layer over
+XML avoiding manipulation of string representation of data
+structures.</p>
+
+<p>LuaSOAP is based on <a href="http://www.keplerproject.org/luaexpat">LuaExpat</a> and on 
+<a href="http://www.lua.org">Lua 5.1</a>.
+The abstraction layer over HTTP depends on 
+<a href="http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.
+An optional layer over HTTPS depends on
+<a href="http://www.inf.puc-rio.br/~brunoos/luasec/">LuaSec 0.4</a>.
+</p>
+
+<h2><a name="installation"></a>Installation</h2>
+
+<p>LuaSOAP is a Lua library composed by a main module (<code>soap.lua</code>)
+and some extensions: <code>client.lua</code> and <code>server.lua</code>.
+The main module must be copied to your <code>package.path</code> and the
+other two files to a <code>soap</code> directory in your
+<code>package.path</code>.
+The file <code>https.lua</code> is an optional module which should be
+installed in a <code>soap/client</code> directory in your
+<code>package.path</code>.</p>
+
+<p>LuaSOAP is also distributed via <a href="http://luarocks.org">LuaRocks</a>.
+There are two rocks: the main
+<a href="http://luarocks.org/repositories/rocks/#luasoap">luasoap</a>
+and the optional
+<a href="http://luarocks.org/repositories/rocks/#luasoap-https">luasoap-https</a>.
+You can check the available rocks in the <a href="http://luarocks.org/repositories/rocks/">main repository</a>.</p>
+
+
+<h2><a name="soap_elements"></a>SOAP elements</h2>
+
+<p>SOAP elements are always represented by Lua tables except
+strings. A SOAP element is a table of the form defined by the <a
+href="http://www.keplerproject.org/luaexpat/lom.html">Lua Object
+Model</a> from the <a href=
+"http://www.keplerproject.org/luaexpat">LuaExpat</a> library. The
+table has the following characteristics:</p>
+
+<ul>
+<li>a special field called <code>tag</code> with the element's
+name;</li>
+
+<li>a special optional field called <code>attr</code> with the
+element's attributes (see next section);</li>
+
+<li>the element's children are stored at the <em>array-part</em> of
+the table. A child could be an ordinary string or SOAP element (a
+Lua table following these same rules).</li>
+</ul>
+
+<h4>Attributes</h4>
+
+<p>The special field <code>attr</code> is a Lua table that stores
+the SOAP element's attributes as pairs
+<em>&lt;key&gt;=&lt;value&gt;</em>. To assure an order (if
+necessary), the sequence of <em>key</em>s should be placed at the
+<em>array-part</em> of that table.</p>
+
+<p>This documentation provides a
+<a href="examples.html#soap_elements_example">detailed example</a>
+which shows some common use cases.</p>
+
+<h4>Encoding and special characters</h4>
+
+<p>
+Since LuaSOAP 3.0, the library took the responsibility to escape data
+inside SOAP elements (<code>entries</code> field of soap envelope; see
+function <a href="#encode">soap.encode</a> below).
+Therefore, XML special characters such as <code>&lt;</code> and
+<code>&gt;</code> are automatically converted to the corresponding XML
+entities (<code>&amp;lt;</code> and <code>&amp;gt;</code>, respectively).
+</p>
+
+<p>This documentation provides a <a href="examples.html#escape_example">detailed example</a>
+which shows some common use cases.</p>
+
+<h2><a name="basic"></a>Basic support</h2>
+
+<p>The module <code>soap</code> implements all basic support for
+encoding and decoding SOAP messages. There are two functions:</p>
+
+<ul>
+<a name="encode"></a>
+<li><b><code>encode(args) =&gt; envelope</code></b><br/>
+  Builds a SOAP document containing a <code>SOAP-Envelope</code> element.
+  It receives a table with the following fields:
+  <ul>
+    <li><b><code>namespace</code></b> a string with an URI indicating the namespace (<code>xmlns</code>) atribute of the request,</li>
+    <li><b><code>method</code></b> a string with the method's name,</li>
+    <li><b><code>entries</code></b> an array (a table with numeric keys) of <a href="#soap_elements">SOAP elements</a>,</li>
+    <li><b><code>header</code></b> (<em>optional</em>) a table of headers (<code>soap:Header</code> element; a <a href="#soap_elements">SOAP element</a> too),</li>
+    <li><b><code>soapversion</code></b> (<em>optional</em>; default = 1.1) a number with the SOAP version (currently supported versions are 1.1 and 1.2),</li>
+    <li><b><code>internal_namespace</code></b> (<em>optional</em>; default = "") a string with the `internal' namespace (<code>xmlns:<em>internal_namespace</em></code>)</li>
+  </ul>
+  The result is always a string containing the SOAP document.<br/>
+  The function can raise errors in case the <code>args</code> table is
+mal formed.
+</li>
+
+<a name="decode"></a>
+<li><b><code>decode (method_response) =&gt; namespace,
+method_name, elements</code></b><br/>
+ Disassembles a SOAP document into Lua objects.
+It receives a string containing the SOAP document.
+The results are: the namespace (string),
+the SOAP-element method's name (string) and
+a table with the contents of the SOAP Body.
+Each element of the <code>elements</code> table can be a
+string or a <a href="#soap_elements">SOAP element</a>.
+</li>
+</ul>
+
+
+<h2><a name="client"></a>Client side</h2>
+
+<p>The module <code>soap.client</code> implements a stand-alone client
+which works over HTTP and is based on <a href=
+"http://www.tecgraf.puc-rio.br/luasocket">LuaSocket 2.0</a>.
+The following function is provided:</p>
+
+<ul>
+<li style="list-style: none"><a name="call"></a></li>
+
+<li><b><code>call (args) =&gt; namespace, method_name, elements</code></b><br/>
+  It encapsulates the call of <code>encode</code> and <code>decode</code>
+  over a connection to an HTTP server, thus the arguments are passed to the
+  <code>encode</code> function and the results received from the
+  <code>decode</code> function.
+  It receives a table with the following fields:
+  <ul>
+    <li><b><code>url</code></b> a string with the URL of the service (the protocol should be <code>http</code> or <code>https</code>, which requires the load of the <code>client.https</code> module),</li>
+    <li><b><code>soapaction</code></b> a string with the value of the <code>SOAPAction</code> header,</li>
+    <li><b><code>encoding</code></b> (<em>optional</em>; default = "") a string with the text encoding (usually <code>"utf-8"</code> or <code>"iso-8859-1"</code>),</li>
+    <li><em>other arguments to the <code><a href="#encode">encode</a></code> function</em></li>
+  </ul>
+  The results are the same as the <code><a href="#decode">decode</a></code>
+  function: the namespace (string), the SOAP-element method's name (string) and
+  a table with the contents of the SOAP Body.</li>
+</ul>
+
+<h4><a name="https"></a>HTTPS and SOAP over other transport layers</h4>
+
+<p>An additional optional module <code>soap.client.https</code> provides the
+hability to send and receive SOAP messages over an HTTPS connection.
+There is no need to use another call function, since it is encapsulated
+into the client implementation.
+In fact, the <code>call</code> function inspects the <code>url</code>
+argument to check over what protocol the SOAP message should be transfered.
+This protocol should be supported through a function
+<code>soap.client.<i>protocol</i></code>, where <i>protocol</i> is a
+function with the same signature of LuaSocket's <code>http.request</code>
+function.
+The <code>soap.client.http</code> is this exact function and the
+<code>soap.client.https</code> is LuaSec's <code>https.request</code>
+function which wraps LuaSocket's <code>http.request</code> over an
+HTTPS connection (this function is available since LuaSec version 0.4).
+</p>
+
+<p><code>soap.client.https</code> module depends of
+<a href="http://luasec.luaforge.net/">LuaSec</a>.</p>
+
+<p>By following this approach, one could extend LuaSOAP to use another protocol
+by just implementing a function equivalent to LuaSocket's http.request or
+LuaSec's https.request.</p>
+
+
+<h2><a name="references"></a>References</h2>
+
+Here is a list of related documentation: 
+
+<ul>
+<li><a href=
+"http://www.w3.org/XML/">http://www.w3.org/XML/</a></li>
+</ul>
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+	<p><small>
+	$Id: manual.html,v 1.10 2009/08/10 19:04:40 tomas Exp $
+	</small></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->
+
+</body>
+</html> 
