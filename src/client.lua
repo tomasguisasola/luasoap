@@ -10,15 +10,28 @@ local assert, tonumber, tostring, pcall = assert, tonumber, tostring, pcall
 local concat = require("table").concat
 
 local ltn12 = require("ltn12")
-local socket_http = require("socket.http")
 local soap = require("soap")
 
 
-local xml_header = '<?xml version="1.0"?>'
+local _M = {
+	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
+	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
+	_VERSION = "LuaSOAP 3.0 client",
+
+	-- Support for SOAP over HTTP is default and only depends on LuaSocket
+	http = require("socket.http"),
+}
+
+local xml_header_template = '<?xml version="1.0"?>'
 
 local mandatory_soapaction = "Field `soapaction' is mandatory for SOAP 1.1 (or you can force SOAP version with `soapversion' field)"
 local mandatory_url = "Field `url' is mandatory"
 local invalid_args = "Supported SOAP versions: 1.1 and 1.2.  The presence of soapaction field is mandatory for SOAP version 1.1.\nsoapversion, soapaction = "
+
+local suggested_layers = {
+	http = "socket.http",
+	https = "ssl.https",
+}
 
 ---------------------------------------------------------------------
 -- Call a remote method.
@@ -35,7 +48,7 @@ local invalid_args = "Supported SOAP versions: 1.1 and 1.2.  The presence of soa
 -- @return String with namespace, String with method's name and
 --	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
-local function call(args)
+function _M.call(args)
 	local soap_action, content_type_header
 	if (not args.soapversion) or tonumber(args.soapversion) == 1.1 then
 		soap_action = '"'..assert(args.soapaction, mandatory_soapaction)..'"'
@@ -47,26 +60,32 @@ local function call(args)
 		assert(false, invalid_args..tostring(args.soapversion)..", "..tostring(args.soapaction))
 	end
 
-	local encoding
+	local xml_header = xml_header_template
 	if args.encoding then
 		xml_header = xml_header:gsub('"%?>', '" encoding="'..args.encoding..'"?>')
 	end
 	local request_body = xml_header..soap.encode(args)
 	local request_sink, tbody = ltn12.sink.table()
+	local headers = {
+		["Content-Type"] = content_type_header,
+		["content-length"] = tostring(request_body:len()),
+		["SOAPAction"] = soap_action,
+	}
+	if args.headers then
+		for h, v in pairs (args.headers) do
+			headers[h] = v
+		end
+	end
 	local url = {
 		url = assert(args.url, mandatory_url),
 		method = "POST",
 		source = ltn12.source.string(request_body),
 		sink = request_sink,
-		headers = {
-			["Content-Type"] = content_type_header,
-			["content-length"] = tostring(request_body:len()),
-			["SOAPAction"] = soap_action,
-		},
+		headers = headers,
 	}
 
 	local protocol = url.url:match"^(%a+)" -- protocol's name
-	local mod = assert(_M[protocol], '"'..protocol..'" protocol support not loaded. Try require"soap.client.'..protocol..'" to enable it.')
+	local mod = assert(_M[protocol], '"'..protocol..'" protocol support unavailable. Try soap.client.'..protocol..' = require"'..suggested_layers[protocol]..'" to enable it.')
 	local request = assert(mod.request, 'Could not find request function on module soap.client.'..protocol)
 
 	local err, code, headers, status = request(url)
@@ -80,12 +99,4 @@ local function call(args)
 end
 
 ---------------------------------------------------------------------
-return {
-	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
-	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
-	_VERSION = "LuaSOAP 3.0 client",
-
-	call = call,
-	-- Support for SOAP over HTTP is default and only depends on LuaSocket
-	http = socket_http
-}
+return _M
