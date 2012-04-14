@@ -37,7 +37,7 @@
 			<ul>
 				<li><a href="manual.html#introduction">Introduction</a></li>
 				<li><a href="manual.html#installation">Installation</a></li>
-				<li><a href="manual.html#soap_elements">SOAP elements</a></li>
+				<li><a href="manual.html#soap_elements">LuaSOAP elements</a></li>
 				<li><a href="manual.html#basic">Basic support</a> 
 					<ul>
 						<li><a href="manual.html#encode">encode</a></li>
@@ -47,6 +47,7 @@
 				<li><a href="manual.html#client">Client side</a> 
 					<ul>
 						<li><a href="manual.html#call">call</a></li>
+						<li><a href="manual.html#https">HTTPS and ...</a></li>
 					</ul>
 				</li>
 				<li><a href="manual.html#references">References</a></li>
@@ -86,7 +87,7 @@ to handle XML documents.</p>
 
 <p>
 LuaSOAP can be downloaded in source code from its
-<a href="http://luaforge.net/project/showfiles.php?group_id=15">LuaForge</a> page.
+<a href="https://github.com/downloads/tomasguisasola/luasoap/luasoap-3.0.tar.gz">GitHub</a> page.
 LuaSOAP can also be installed via <a href="http://luarocks.org">LuaRocks</a> with the following command line:
 </p>
 <code>luarocks install luasoap</code>
@@ -95,12 +96,13 @@ LuaSOAP can also be installed via <a href="http://luarocks.org">LuaRocks</a> wit
 <h2><a name="history"></a>History</h2>
 
 <dl class="history">
-    <dt><strong>LuaSOAP 3.0</strong> [??/??/201?]</dt>
+    <dt><strong>LuaSOAP 3.0</strong> [13/Apr/2012]</dt>
     <dd>
     <ul>
-        <li>Addition of automatic escaping of special characters (thanks to Seth Behunin)</li>
+        <li>Addition of <a href="manual.html#escaping">automatic escaping</a> of special characters (thanks to Seth Behunin)</li>
         <li>Bug correction: ignoring soap:Header while decoding soap message (thanks to Humberto Anjos)</li>
         <li>Reimplementation to make it work in all Lua 5.X versions</li>
+        <li>Removal of <code>soap.client.https</code> pseudo-module (see <a href="manual.html#https">HTTPS and SOAP over other transport layers</a>)</li>
     </ul>
     </dd>
 
