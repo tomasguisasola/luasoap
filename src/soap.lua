@@ -212,7 +212,7 @@ local function list_children (obj, tag)
 				return v
 			end
 			i = i+1
-			v = self[i]
+			v = obj[i]
 		end
 		return nil
 	end
@@ -229,20 +229,20 @@ local function decode (doc)
 	local ns = obj.tag:match ("^(.-):")
 	assert (obj.tag == ns..":Envelope", "Not a SOAP Envelope: "..
 		tostring(obj.tag))
-	local namespace = find_xmlns (obj.attr)
 	local lc = list_children (obj)
 	local o = lc ()
 	-- Skip SOAP:Header
-	while o and o.tag ~= ns..":Header" and o.tag ~= "SOAP-ENV:Header" do
+	while o and (o.tag == ns..":Header" or o.tag == "SOAP-ENV:Header") do
 		o = lc ()
 	end
 	if o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body" then
-		obj = list_children (o)
+		obj = list_children (o)()
 	else
 		error ("Couldn't find SOAP Body!")
 	end
-	local method = obj.tag:match ("%:([^:]*)$") or obj.tag
 
+	local namespace = find_xmlns (obj.attr)
+	local method = obj.tag:match ("%:([^:]*)$") or obj.tag
 	local entries = {}
 	for i = 1, #obj do
 		entries[i] = obj[i]
@@ -252,7 +252,7 @@ end
 
 ---------------------------------------------------------------------
 return {
-	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2004-2013 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 3.0",
 
