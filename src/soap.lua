@@ -235,7 +235,7 @@ local function decode (doc)
 	while o and (o.tag == ns..":Header" or o.tag == "SOAP-ENV:Header") do
 		o = lc ()
 	end
-	if o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body" then
+	if o and (o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body") then
 		obj = list_children (o)()
 	else
 		error ("Couldn't find SOAP Body!")
