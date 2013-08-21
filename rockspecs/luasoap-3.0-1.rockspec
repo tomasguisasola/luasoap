@@ -2,9 +2,8 @@ package = "luasoap"
 version = "3.0-1"
 
 source = {
-url = "",
-   url="http://github.com/downloads/tomasguisasola/luasoap/luasoap-3.0.tar.gz",
-   md5="",
+   url="https://github.com/tomasguisasola/luasoap/archive/v3_0.tar.gz",
+   md5="0ca112b934d007f46015ddd08aa9df93",
 }
 
 description = {
