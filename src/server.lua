@@ -383,7 +383,7 @@ end
 
 ---------------------------------------------------------------------
 return {
-	_COPYRIGHT = "Copyright (C) 2004-2011 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2004-2013 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 3.0 service helping functions",
 
