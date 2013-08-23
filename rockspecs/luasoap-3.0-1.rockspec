@@ -9,7 +9,7 @@ source = {
 description = {
    summary = "Support for SOAP",
    detailed = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
-   homepage = "",
+   homepage = "http://tomasguisasola.github.io/luasoap/",
    license = "MIT/X11",
 }
 
