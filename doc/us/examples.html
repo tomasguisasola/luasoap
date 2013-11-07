@@ -118,7 +118,7 @@ Below is an example of a simple way of escaping strings that contain special cha
 <pre class="example">
 local escaped_element = {
 	tag = "StringEscapingTest",
-	{ tag = "string", "&lt;this was automatically escaped", },
+	{ tag = "string", "&lt;this was automatically escaped&gt;", },
 	{ tag = "string", 'do not re-escape my &amp;', },
 } --&gt; &lt;StringEscapingTest&gt;&lt;string&gt;&amp;lt;this was automatically escaped&amp;gt;&lt;/string&gt;&lt;string&gt;do not re-escape my &amp;amp;&lt;/string&gt;&lt;/StringEscapingTest&gt;
 </pre>
