@@ -223,7 +223,7 @@ local tests = {
 
 {
 	namespace = nil,
-		method = "StringEscapingTest",
+	method = "StringEscapingTest",
 	entries = {
 		{ tag = "string", "<this was automatically escaped", },
 		{ tag = "string", '"this was also &automatically &escaped"', },
@@ -253,5 +253,10 @@ for i, t in ipairs(tests) do
 	local ok, err = lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml)
 	local dx = assert (ok, (err or '').."\non test #"..i..": "..t.method..'\n'..t.xml..'\n'..s)
 	assert (table.equal (ds, dx))
+
+	local ns, met, entries = soap.decode ((t.xml:gsub("%>%s%<", "><")))
+	assert (ns == t.namespace, "Wrong decoded namespace in method "..t.method..". Expected [["..tostring(t.namespace).."]] but decoded was [["..tostring(ns).."]]")
+	assert (met == t.method:gsub("^[_%w]+%:([_%w]+)$", "%1"), "Wrong decoded method in method "..t.method.."; decoded was [["..tostring(met).."]]")
+	assert (entries[1].tag == t.entries[1].tag)
 end
 print(soap._VERSION, "Ok!")
