@@ -13,7 +13,7 @@ local ltn12 = require("ltn12")
 local soap = require("soap")
 
 
-local _M = {
+local M = {
 	_COPYRIGHT = "Copyright (C) 2004-2013 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 3.0 client",
@@ -48,7 +48,7 @@ local suggested_layers = {
 -- @return String with namespace, String with method's name and
 --	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
-function _M.call(args)
+function M.call(args)
 	local soap_action, content_type_header
 	if (not args.soapversion) or tonumber(args.soapversion) == 1.1 then
 		soap_action = '"'..assert(args.soapaction, mandatory_soapaction)..'"'
@@ -85,18 +85,42 @@ function _M.call(args)
 	}
 
 	local protocol = url.url:match"^(%a+)" -- protocol's name
-	local mod = assert(_M[protocol], '"'..protocol..'" protocol support unavailable. Try soap.client.'..protocol..' = require"'..suggested_layers[protocol]..'" to enable it.')
+	local mod = assert(M[protocol], '"'..protocol..'" protocol support unavailable. Try soap.client.'..protocol..' = require"'..suggested_layers[protocol]..'" to enable it.')
 	local request = assert(mod.request, 'Could not find request function on module soap.client.'..protocol)
 
-	local err, code, headers, status = request(url)
+	local one_or_nil, status_code, headers, receive_status = request(url)
 	local body = concat(tbody)
-	assert(tonumber(code) == 200, "Error on request: "..tostring(err or code).."\n\n"..tostring(body))
+	--assert(tonumber(status_code) == 200, "Error on request: "..tostring(one_or_nil or status_code).."\n\n"..tostring(body))
+	--if tonumber(status_code) ~= 200 then
+	if one_or_nil == nil then
+		local error_msg = "Error on response: "..tostring(status_code).."\n\n"..tostring(body)
+		local extra_info = {
+			http_status_code = status_code,
+			http_response_headers = headers,
+			receive_status = receive_status,
+			body = body,
+		}
+		return nil, error_msg, extra_info
+	end
 
-	local ok, error_or_ns, method, result = pcall(soap.decode, body)
-	assert(ok, "Error while decoding: "..tostring(error_or_ns).."\n\n"..tostring(body))
+	local ok, namespace, method, result = pcall(soap.decode, body)
+	--assert(ok, "Error while decoding: "..tostring(namespace).."\n\n"..tostring(body))
+	if not ok then
+		local error_msg = "Error while decoding: "..tostring(namespace).."\n\n"..tostring(body)
+		local extra_info = {
+			http_status_code = status_code,
+			http_response_headers = headers,
+			receive_status = receive_status,
+			body = body,
+			decoding_error = namespace, -- this is pcall's error
+			decode_method = method,
+			result = result,
+		}
+		return nil, error_msg, extra_info
+	end
 
-	return error_or_ns, method, result
+	return namespace, method, result
 end
 
 ---------------------------------------------------------------------
-return _M
+return M
