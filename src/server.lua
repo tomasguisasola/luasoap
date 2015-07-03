@@ -7,7 +7,7 @@ local next, type, tostring, pcall, unpack, pairs, ipairs = next, type, tostring,
 local error, assert = error, assert
 local table = require"table"
 local string = require"string"
-local cgilua = cgilua
+local cgilua = cgilua or require"cgilua"
 local soap = require"soap"
 
 
