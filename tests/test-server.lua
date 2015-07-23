@@ -84,16 +84,16 @@ server.export {
 	method = lista_imagens_galeria,
 	message = {
 		name = "Galeria",
-		{ name = "id", occurence = 1, type = "integer", },
+		{ name = "id", occurrence = 1, type = "integer", },
 	},
 	response = {
 		name = "ImagensGaleria",
 		{
 			name = "Imagem",
-			{ name = "codigo", occurence = 1, type = "integer", },
-			{ name = "sequencial", occurence = 1, type = "integer", },
-			{ name = "legenda", occurence = 1, type = "string", },
-			{ name = "ordem", occurence = 1, type = "integer", },
+			{ name = "codigo", occurrence = 1, type = "integer", },
+			{ name = "sequencial", occurrence = 1, type = "integer", },
+			{ name = "legenda", occurrence = 1, type = "string", },
+			{ name = "ordem", occurrence = 1, type = "integer", },
 		},
 	},
 }
