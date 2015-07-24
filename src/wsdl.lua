@@ -3,6 +3,7 @@
 -- See Copyright Notice in license.html
 ------------------------------------------------------------------------------
 
+local soap = require"soap"
 local strformat = require"string".format
 local tconcat = require"table".concat
 
@@ -104,8 +105,12 @@ end
 
 ------------------------------------------------------------------------------
 function M:gen_types ()
-	self.types.tag = "wsdl:types"
-	return soap.serialize (self.types)
+	if self.types then
+		self.types.tag = "wsdl:types"
+		return soap.serialize (self.types)
+	else
+		return ''
+	end
 end
 
 --=---------------------------------------------------------------------------
@@ -148,8 +153,10 @@ end
 function M:gen_messages ()
 	local m = {}
 	for name, desc in pairs (self.methods) do
-		m[#m+1] = gen_message (desc.request, "request")
-		m[#m+1] = gen_message (desc.response, "response")
+		local req = assert (desc.request, "Absent 'request' field of method '"..name.."'")
+		m[#m+1] = gen_message (req, "request")
+		local res = assert (desc.response, "Absent 'response' field of method '"..name.."'")
+		m[#m+1] = gen_message (res, "response")
 	end
 	return tconcat (m)
 end
