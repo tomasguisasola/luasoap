@@ -138,7 +138,7 @@ local function gen_message (elem, name)
 	else
 		error ("Incomplete description: "..name.." parameters might have an 'element' or a 'type' attribute")
 	end
-	return soap.serialize (message_template)
+	return soap.serialize (tmpl)
 end
 
 ------------------------------------------------------------------------------
