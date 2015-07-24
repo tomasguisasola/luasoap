@@ -4,7 +4,7 @@
 -- $Id:$
 ------------------------------------------------------------------------------
 
-local assert, pairs, pcall, require, setmetatable, tostring, type, unpack = assert, pairs, pcall, require, setmetatable, tostring, type, unpack
+local assert, pairs, pcall, rawget, require, setmetatable, tostring, type, unpack = assert, pairs, pcall, rawget, require, setmetatable, tostring, type, unpack
 
 local cgilua = cgilua or require"cgilua"
 local soap = require"soap"
@@ -104,7 +104,7 @@ end
 -- @param querystring String with the query string.
 ------------------------------------------------------------------------------
 function M:handle_request(postdata, querystring)
-	cgilua.seterroroutput(self.fatalerrorfunction())
+	cgilua.seterroroutput(self.fatalerrorfunction)
 
 	local namespace, func, arg_table
 	local header
@@ -116,8 +116,10 @@ function M:handle_request(postdata, querystring)
 			func = function ()
 				-- import all wsdl functions into server
 				for n, m in pairs(require"soap.wsdl") do
-					assert (self[n] == nil, "Module 'soap.wsdl' not allowed to override method 'soap."..n.."'")
-					self[n] = m
+					if type(m) == "function" then
+						assert (M[n] == nil, "Module 'soap.wsdl' not allowed to override method 'soap."..n.."'")
+						M[n] = m
+					end
 				end
 				return self:generate_wsdl ()
 			end
@@ -132,8 +134,8 @@ function M:handle_request(postdata, querystring)
 		arg_table = {}
 	end
 
-	local ok, result = callfunc(func, namespace, arg_table)
-	respond(result, header)
+	local ok, result = self:callfunc(func, namespace, arg_table)
+	self:respond(result, header)
 end
 
 ------------------------------------------------------------------------------
@@ -142,11 +144,13 @@ end
 -- @return Table with server representation.
 
 function M.new (server)
+	assert (server ~= M, "Incorrect creation of new server: you must call soap.server.new with a dot (.), not with a colon (:)")
 	server.fatalerrorfunction = function (msg)
 		server:respond (
 			server:builderrorenvelope ("soap:ServerError", msg)
 		)
     end
+	server.methods = {}
 	return setmetatable (server, M)
 end
 
