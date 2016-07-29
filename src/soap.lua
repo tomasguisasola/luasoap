@@ -177,9 +177,10 @@ local function encode (args)
 		envelope_template.attr["xmlns:soap"] = xmlns_soap
 	end
 	local xmlns = "xmlns"
+	local method = args.method
 	if args.internal_namespace then
 		xmlns = xmlns..":"..args.internal_namespace
-		args.method = args.internal_namespace..":"..args.method
+		method = args.internal_namespace..":"..method
 	end
 	-- Cleans old header and insert a new one (if it exists).
 	insert_header (envelope_template, args.header)
@@ -189,7 +190,7 @@ local function encode (args)
 		body[i] = args.entries[i]
 	end
 	-- Sets method (actually, the table's tag) and namespace.
-	body.tag = args.method
+	body.tag = method
 	body.attr[xmlns] = args.namespace
 	return serialize (envelope_template)
 end
