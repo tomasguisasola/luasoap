@@ -1,7 +1,6 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
 -- See Copyright Notice in license.html
--- $Id: soap.lua,v 1.9 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
 local assert, error, pairs, tonumber, tostring, type = assert, error, pairs, tonumber, tostring, type
@@ -171,6 +170,8 @@ local xmlns_soap12 = "http://www.w3.org/2003/05/soap-envelope"
 -- @return String with SOAP envelope element.
 ---------------------------------------------------------------------
 local function encode (args)
+	local tae = type (args.entries)
+	assert (tae == "table", "Invalid args: expected table but fot "..tae)
 	if tonumber(args.soapversion) == 1.2 then
 		envelope_template.attr["xmlns:soap"] = xmlns_soap12
 	else

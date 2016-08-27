@@ -1,10 +1,9 @@
 ------------------------------------------------------------------------------
 -- LuaSOAP support for service development.
 -- See Copyright Notice in license.html
--- $Id:$
 ------------------------------------------------------------------------------
 
-local assert, pairs, pcall, rawget, require, setmetatable, tostring, type, unpack = assert, pairs, pcall, rawget, require, setmetatable, tostring, type, unpack
+local assert, getmetatable, pairs, pcall, require, setmetatable, tostring, type, unpack = assert, getmetatable, pairs, pcall, require, setmetatable, tostring, type, unpack
 
 local cgilua = cgilua or require"cgilua"
 local soap = require"soap"
@@ -19,6 +18,7 @@ local M = {
 	_VERSION = "LuaSOAP 4.0 service helping functions",
 
 	encoding = "utf-8", -- default encoding
+	mode = 1.2, -- default mode
 }
 M.__index = M
 
@@ -29,13 +29,14 @@ end
 
 ------------------------------------------------------------------------------
 function M:respond(resp, header)
-	cgilua.header("Content-length", string.len(resp))
+	local full_response = self:xml_header()..resp
+	cgilua.header("Content-length", string.len(full_response))
 	cgilua.header("Connection", "close")
 	cgilua.contentheader("text", "xml")
 	if header then
 		cgilua.put(header)
 	end
-	cgilua.put(resp)
+	cgilua.put(full_response)
 end
 
 ------------------------------------------------------------------------------
@@ -54,8 +55,7 @@ end
 ------------------------------------------------------------------------------
 function M:decodedata(doc)
 	local namespace, elem_name, elems = soap.decode(doc)
-	local func = self.methods[elem_name].method
-	assert(type(func) == "function", "Unavailable method: `"..tostring(elem_name).."'")
+	local func = assert (self.methods[elem_name], "Unavailable method: `"..tostring(elem_name).."'").method
 
 	return namespace, func, (elems or {})
 end
@@ -84,17 +84,31 @@ end
 ------------------------------------------------------------------------------
 -- Exports methods that can be used by the server.
 -- @param desc Table with the method description.
+--	The programmer MUST provide different tables for different methods.
 ------------------------------------------------------------------------------
 function M:export(desc)
-	local f = desc.method
-	desc.method = function (...) -- ( namespace, unpack(arguments) )
-		local res = f(...)
-		return soap.encode{
-			namespace = self.targetNamespace,
-			method = desc.response.name,
-			entries = res,
-		}
+	assert (getmetatable (self) == M, "Invalid argument #1: it must be a soap server (maybe you called this function with a dot (.), not with a colon (:))")
+	if desc.request then
+		desc.request.name = desc.request.name or (desc.name.."SoapIn")
 	end
+	if desc.response then
+		desc.response.name = desc.response.name or (desc.name.."SoapOut")
+		local f = desc.method
+		desc.method = function (...) -- ( namespace, unpack(arguments) )
+			local res = f(...)
+			return soap.encode{
+				namespace = self.targetNamespace,
+				method = desc.response.name,
+				entries = res,
+			}
+		end
+	end
+	if desc.fault then
+		desc.fault.name = desc.fault.name or (desc.name.."SoapFault")
+	end
+	assert(desc.name, "A method must have a name!")
+	desc.portTypeName =  desc.portTypeName or (desc.name.."Soap")
+	desc.bindingName =  desc.bindingName or (desc.name.."Soap")
 	self.methods[desc.name] = desc
 end
 
@@ -104,18 +118,17 @@ end
 -- @param querystring String with the query string.
 ------------------------------------------------------------------------------
 function M:handle_request(postdata, querystring)
+	assert(getmetatable(self) == M, "Invalid argument #1: it must be a soap server (maybe you called this function with a dot (.), not with a colon (:))")
 	cgilua.seterroroutput(self.fatalerrorfunction)
 
 	local namespace, func, arg_table
-	local header
 	if postdata then
 		namespace, func, arg_table = self:decodedata(postdata)
-		header = self:xml_header()
 	else
-		if querystring and querystring:lower() == "wsdl" then -- WSDL service
+		if not querystring or querystring=='' or querystring:lower() == "wsdl" then -- WSDL service
 			func = function ()
 				-- import all wsdl functions into server
-				for n, m in pairs(require"soap.wsdl") do
+				for n, m in pairs (require"soap.wsdl") do
 					if type(m) == "function" then
 						assert (M[n] == nil, "Module 'soap.wsdl' not allowed to override method 'soap."..n.."'")
 						M[n] = m
@@ -129,13 +142,12 @@ function M:handle_request(postdata, querystring)
 --			end
 		else
 --			func = __methods["listMethods"]
---			header = self:xml_header()
 		end
 		arg_table = {}
 	end
 
 	local ok, result = self:callfunc(func, namespace, arg_table)
-	self:respond(result, header)
+	self:respond(result)
 end
 
 ------------------------------------------------------------------------------
@@ -151,6 +163,7 @@ function M.new (server)
 		)
     end
 	server.methods = {}
+	server.types = server.types or {}
 	return setmetatable (server, M)
 end
 
