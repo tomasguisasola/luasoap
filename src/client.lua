@@ -18,8 +18,6 @@ local M = {
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 3.0 client",
 
-	-- Support for SOAP over HTTP is default and only depends on LuaSocket
-	http = require("socket.http"),
 }
 
 local xml_header_template = '<?xml version="1.0"?>'
@@ -44,12 +42,18 @@ local suggested_layers = {
 -- header: Table describing the header of the SOAP-ENV (optional).
 -- internal_namespace: String with the optional namespace used
 --  as a prefix for the method name (default = "").
+-- auth: String with desired authentication method (optional).
 -- soapversion: Number with SOAP version (default = 1.1).
 -- @return String with namespace, String with method's name and
 --	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
 function M.call(args)
-	local soap_action, content_type_header
+        local soap_action, content_type_header
+        if args.auth == "digest" then
+                M.http = require "http-digest"
+        else
+                M.http = require "socket.http"
+        end
 	if (not args.soapversion) or tonumber(args.soapversion) == 1.1 then
 		soap_action = '"'..assert(args.soapaction, mandatory_soapaction)..'"'
 		content_type_header = "text/xml"
@@ -89,7 +93,12 @@ function M.call(args)
 	local request = assert(mod.request, 'Could not find request function on module soap.client.'..protocol)
 
 	local one_or_nil, status_code, headers, receive_status = request(url)
-	local body = concat(tbody)
+        local body
+        if args.auth == "digest" then
+                body = concat(tbody,"", 2)
+        else
+	        body = concat(tbody)
+        end
 	--assert(tonumber(status_code) == 200, "Error on request: "..tostring(one_or_nil or status_code).."\n\n"..tostring(body))
 	--if tonumber(status_code) ~= 200 then
 	if one_or_nil == nil then
