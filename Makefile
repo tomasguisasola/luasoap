@@ -24,5 +24,8 @@ uninstall:
 	rm -rf $(INSTALL_DIR) $(LUA_DIR)/soap.lua
 
 dist:
-	cd ..; tar czf luasoap-$(VERSION).tar.gz luasoap-$(VERSION) --exclude .git --exclude rockspecs
+	ln -fs `pwd` ../luasoap-$(VERSION)
+	cd .. && tar czf luasoap-$(VERSION).tar.gz  --exclude .git --exclude rockspecs luasoap-$(VERSION)/*
+#	cd ..; tar czf luasoap-$(VERSION).tar.gz luasoap-$(VERSION) --exclude .git --exclude rockspecs
+	rm -rf ../luasoap-$(VERSION)
 	echo Created ../luasoap-$(VERSION).tar.gz
