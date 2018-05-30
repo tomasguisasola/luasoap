@@ -268,13 +268,10 @@ end
 
 -- Header filter
 -- Thanks to Jeremy (KONG)
+local inbound_header = [=[<wsse:Security><wsse:JWT>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</wsse:JWT></wsse:Security>]=]
 local inbound_envelope = remove_tabs_and_lines ([=[
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
-	<soap:Header>
-		<wsse:Security>
-<wsse:JWT>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</wsse:JWT>
-		</wsse:Security>
-	</soap:Header>
+	<soap:Header>]=]..inbound_header..[=[</soap:Header>
 	<soap:Body>
 		<searchClaims>
 			<firstServiceDate>2015-03-19</firstServiceDate>
@@ -293,13 +290,15 @@ assert (headers[1].tag == "wsse:Security", "Cannot identify header's tag")
 assert (type(headers[1][1]) == "table", "Cannot identify document header")
 assert (headers[1][1].tag == "wsse:JWT", "Cannot identify header's tag")
 assert (headers[1][1][1] == "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", "Unexpected header's content")
-local outbound_envelope = remove_tabs_and_lines ([=[
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
-  <soap:Header>
+
+local outbound_header = [=[
     <wsse:Security>
       <wsse:Username>MyConsumer</wsse:Username>
       <wsse:Userid>33333-33333-33333-33333</wsse:Userid>
-    </wsse:Security>
+    </wsse:Security>]=]
+local outbound_envelope = remove_tabs_and_lines ([=[
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Header>]=]..outbound_header..[=[
   </soap:Header>
   <soap:Body>
     <searchClaims>
@@ -312,5 +311,23 @@ local outbound_envelope = remove_tabs_and_lines ([=[
     </searchClaims>
   </soap:Body>
 </soap:Envelope>]=])
+local data = {
+	namespace = nm,
+	method = met,
+	entries = entries,
+	header = {
+		tag = "wsse:Security",
+		{
+			tag = "wsse:Username",
+			"MyConsumer",
+		},
+		{
+			tag = "wsse:Userid",
+			"33333-33333-33333-33333",
+		},
+	},
+}
+local doc = soap.encode (data)
+assert (doc == outbound_envelope:gsub("%>%s*%<", "><"))
 
 print(soap._VERSION, "Ok!")
