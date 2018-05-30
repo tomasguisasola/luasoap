@@ -3,8 +3,14 @@
 -- $Id: test.lua,v 1.6 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
+local assert, tostring, type = assert, tostring, type
+local string = require"string"
 local lom = require"lxp.lom"
 local soap = require"soap"
+
+function remove_tabs_and_lines (s)
+	return (string.gsub (s, "[\t\r\n]",""))
+end
 
 function table.equal (t1, t2)
 	assert (type(t1) == type(t2), string.format ("%s (%s) ~= %s (%s)", type(t1),
@@ -245,11 +251,11 @@ local tests = {
 
 for i, t in ipairs(tests) do
 	local s = soap.encode (t)
-	s = string.gsub (s, "[\n\r\t]", "")
+	s = remove_tabs_and_lines (s)
 	local ok, err = lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..s)
 	local ds = assert (ok, (err or '').."\non test #"..i..": "..t.method..'\n'..s)
 
-	t.xml = string.gsub (t.xml, "[\n\r\t]", "")
+	t.xml = remove_tabs_and_lines (t.xml)
 	local ok, err = lom.parse ([[<?xml version="1.0" encoding="ISO-8859-1"?>]]..t.xml)
 	local dx = assert (ok, (err or '').."\non test #"..i..": "..t.method..'\n'..t.xml..'\n'..s)
 	assert (table.equal (ds, dx))
@@ -259,4 +265,52 @@ for i, t in ipairs(tests) do
 	assert (met == t.method:gsub("^[_%w]+%:([_%w]+)$", "%1"), "Wrong decoded method in method "..t.method.."; decoded was [["..tostring(met).."]]")
 	assert (entries[1].tag == t.entries[1].tag)
 end
+
+-- Header filter
+-- Thanks to Jeremy (KONG)
+local inbound_envelope = remove_tabs_and_lines ([=[
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+	<soap:Header>
+		<wsse:Security>
+<wsse:JWT>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</wsse:JWT>
+		</wsse:Security>
+	</soap:Header>
+	<soap:Body>
+		<searchClaims>
+			<firstServiceDate>2015-03-19</firstServiceDate>
+			<lastServiceDate>2015-03-19</lastServiceDate>
+			<memSuffix>030303</memSuffix>
+			<phsNumber>34343</phsNumber>
+			<taxId>34525345325435342534523</taxId>
+			<subNum>768787688678678768</subNum>
+		</searchClaims>
+	</soap:Body>
+</soap:Envelope>]=])
+local nm, met, entries, headers = soap.decode (inbound_envelope)
+assert (type(headers) == "table", "Cannot identify document header")
+assert (type(headers[1]) == "table", "Cannot identify document header")
+assert (headers[1].tag == "wsse:Security", "Cannot identify header's tag")
+assert (type(headers[1][1]) == "table", "Cannot identify document header")
+assert (headers[1][1].tag == "wsse:JWT", "Cannot identify header's tag")
+assert (headers[1][1][1] == "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", "Unexpected header's content")
+local outbound_envelope = remove_tabs_and_lines ([=[
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  <soap:Header>
+    <wsse:Security>
+      <wsse:Username>MyConsumer</wsse:Username>
+      <wsse:Userid>33333-33333-33333-33333</wsse:Userid>
+    </wsse:Security>
+  </soap:Header>
+  <soap:Body>
+    <searchClaims>
+        <firstServiceDate>2015-03-19</firstServiceDate>
+        <lastServiceDate>2015-03-19</lastServiceDate>
+        <memSuffix>030303</memSuffix>
+        <phsNumber>34343</phsNumber>
+        <taxId>34525345325435342534523</taxId>
+        <subNum>768787688678678768</subNum>
+    </searchClaims>
+  </soap:Body>
+</soap:Envelope>]=])
+
 print(soap._VERSION, "Ok!")
