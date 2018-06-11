@@ -12,7 +12,7 @@ local tconcat = require"table".concat
 local qname_patt = "^%g*%:%g*$"
 
 local M = {
-	_COPYRIGHT = "Copyright (C) 2015 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2018 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 4.0 WSDL generation helping functions",
 }
