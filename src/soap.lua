@@ -171,7 +171,7 @@ local xmlns_soap12 = "http://www.w3.org/2003/05/soap-envelope"
 ---------------------------------------------------------------------
 local function encode (args)
 	local tae = type (args.entries)
-	assert (tae == "table", "Invalid args: expected table but fot "..tae)
+	assert (tae == "table", "Invalid field entries: expected table but got "..tae)
 	if tonumber(args.soapversion) == 1.2 then
 		envelope_template.attr["xmlns:soap"] = xmlns_soap12
 	else
@@ -233,8 +233,10 @@ local function decode (doc)
 		tostring(obj.tag))
 	local lc = list_children (obj)
 	local o = lc ()
-	-- Skip SOAP:Header
+	local headers = {}
+	-- Store SOAP:Headers separatelly
 	while o and (o.tag == ns..":Header" or o.tag == "SOAP-ENV:Header") do
+		headers[#headers+1] = list_children (o)()
 		o = lc ()
 	end
 	if o and (o.tag == ns..":Body" or o.tag == "SOAP-ENV:Body") then
@@ -249,12 +251,12 @@ local function decode (doc)
 	for i = 1, #obj do
 		entries[i] = obj[i]
 	end
-	return namespace, method, entries
+	return namespace, method, entries, headers
 end
 
 ---------------------------------------------------------------------
 return {
-	_COPYRIGHT = "Copyright (C) 2004-2015 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2004-2018 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 4.0",
 

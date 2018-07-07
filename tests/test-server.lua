@@ -90,20 +90,19 @@ end
 -- Register server method
 server:export {
 	name = "listaImagensGaleria",
-	method = lista_imagens_galeria,
-	message = {
+	method = function (...) --[[...]] end,
+-- lista_imagens_galeria,
+	request = {
 		name = "Galeria",
-		{ name = "id", occurrence = 1, type = "integer", },
+		{ name = "id", occurrence = 1, type = "s:integer", },
 	},
 	response = {
 		name = "ImagensGaleria",
-		{
-			name = "Imagem",
-			{ name = "codigo", occurrence = 1, type = "integer", },
-			{ name = "sequencial", occurrence = 1, type = "integer", },
-			{ name = "legenda", occurrence = 1, type = "string", },
-			{ name = "ordem", occurrence = 1, type = "integer", },
-		},
+		{ name = "codigo", occurrence = 1, type = "s:integer", },
+		{ name = "sequencial", occurrence = 1, type = "s:integer", },
+		{ name = "legenda", occurrence = 1, type = "s:string", },
+		{ name = "ordem", occurrence = 1, type = "s:integer", },
+		
 	},
 }
 

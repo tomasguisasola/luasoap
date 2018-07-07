@@ -14,9 +14,9 @@ local soap = require("soap")
 
 
 local M = {
-	_COPYRIGHT = "Copyright (C) 2004-2013 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2004-2018 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
-	_VERSION = "LuaSOAP 3.0 client",
+	_VERSION = "LuaSOAP 4.0 client",
 
 	-- Support for SOAP over HTTP is default and only depends on LuaSocket
 	http = require("socket.http"),

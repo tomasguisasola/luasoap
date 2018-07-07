@@ -13,7 +13,7 @@ local table = require"table"
 
 ------------------------------------------------------------------------------
 local M = {
-	_COPYRIGHT = "Copyright (C) 2004-2015 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2004-2018 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 4.0 service helping functions",
 
@@ -55,7 +55,9 @@ end
 ------------------------------------------------------------------------------
 function M:decodedata(doc)
 	local namespace, elem_name, elems = soap.decode(doc)
-	local func = assert (self.methods[elem_name], "Unavailable method: `"..tostring(elem_name).."'").method
+	assert (self.methods[elem_name], "Unavailable method: `"..tostring(elem_name).."'")
+	local func = self.methods[elem_name].method
+	assert (type (func) == "function", "Registered method is not a function: `"..tostring(elem_name).."'")
 
 	return namespace, func, (elems or {})
 end
@@ -95,7 +97,7 @@ function M:export(desc)
 		desc.response.name = desc.response.name or (desc.name.."SoapOut")
 		local f = desc.method
 		desc.method = function (...) -- ( namespace, unpack(arguments) )
-			local res = f(...)
+			local res = { f(...) }
 			return soap.encode{
 				namespace = self.targetNamespace,
 				method = desc.response.name,
@@ -164,6 +166,9 @@ function M.new (server)
     end
 	server.methods = {}
 	server.types = server.types or {}
+	if type(server.mode) ~= "table" then
+		server.mode = { server.mode or M.mode }
+	end
 	return setmetatable (server, M)
 end
 
