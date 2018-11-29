@@ -56,11 +56,11 @@ local function attrs (a)
 		if a[1] then
 			for i = 1, #a do
 				local v = a[i]
-				c[i] = strformat ("%s=%q", v, a[v])
+				c[i] = strformat ("%s=%q", v, tostring(a[v]))
 			end
 		else
 			for i, v in pairs (a) do
-				c[#c+1] = strformat ("%s=%q", i, v)
+				c[#c+1] = strformat ("%s=%q", i, tostring(v))
 			end
 		end
 		if #c > 0 then
