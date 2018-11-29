@@ -1,14 +1,18 @@
-# $Id: Makefile,v 1.13 2009/07/22 19:02:46 tomas Exp $
-#
+VERSION=4.0
 
-VERSION=3.0
+# Default prefix
+PREFIX ?= /usr/local
 
-LUA_DIR= /usr/local/share/lua/5.1
+# Lua version and dirs
+LUA_SYS_VER ?= 5.3
+# System's lua directory (where Lua libraries will be installed)
+LUA_DIR ?= $(PREFIX)/share/lua/$(LUA_SYS_VER)
+# Installation directories
 INSTALL_DIR= $(LUA_DIR)/soap
 EXTRA_DIR= $(INSTALL_DIR)/client
 
-MAIN_LUA= src/soap.lua 
-LUAS= src/client.lua src/server.lua
+MAIN_LUA= src/soap.lua
+LUAS= src/client.lua src/server.lua src/wsdl.lua
 EXTRA= src/client/https.lua
 
 build clean:
