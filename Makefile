@@ -1,4 +1,5 @@
 VERSION=4.0
+LUA_SOAP_VERSION=luasoap-$(VERSION)
 
 # Default prefix
 PREFIX ?= /usr/local
@@ -28,5 +29,7 @@ uninstall:
 	rm -rf $(INSTALL_DIR) $(LUA_DIR)/soap.lua
 
 dist:
-	cd ..; tar czf luasoap-$(VERSION).tar.gz luasoap-$(VERSION) --exclude .git --exclude rockspecs
-	echo Created ../luasoap-$(VERSION).tar.gz
+	ln -fs `pwd` ../$(LUA_SOAP_VERSION)
+	cd .. && tar czf $(LUA_SOAP_VERSION).tar.gz $(LUA_SOAP_VERSION) --exclude .git --exclude rockspecs $(LUA_SOAP_VERSION)
+	rm -rf ../$(LUA_SOAP_VERSION)
+	echo Created ../$(LUA_SOAP_VERSION).tar.gz
