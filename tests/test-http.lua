@@ -3,23 +3,21 @@
 local soap_client = require"soap.client"
 
 local request = {
-  url = "http://validator.soapware.org",
-  soapaction = "/validator1",
-  namespace = nil,
-  method = "easyStructTest",
+  url = "http://www.dneonline.com/calculator.asmx",
+  soapaction = "http://tempuri.org/Add",
+  namespace = "http://tempuri.org/",
+  method = "Add",
   entries = {
-    {
-      tag = "stooges",
-      { tag = "curly", attr = { "xsi:type", ["xsi:type"] = "xsd:int", }, -5 },
-      { tag = "larry", attr = { "xsi:type", ["xsi:type"] = "xsd:int", }, 5 },
-      { tag = "moe",   attr = { "xsi:type", ["xsi:type"] = "xsd:int", }, 41 },
-    },
+    { tag = "intA", 1 },
+    { tag = "intB", 2 },
   }
 }
 
 local ns, meth, ent = soap_client.call (request)
-assert(tonumber(ent[2][1]) == 41)
+assert (meth == "AddResponse")
+assert (type(ent) == "table")
+assert (type(ent[1]) == "table")
+assert (ent[1].tag == "AddResult")
+assert (ent[1][1] == '3')
 
-request.entries[1][2][1] = "abc"
-soap_client.call (request)
-print"Ok!"
+print(soap_client._VERSION, "Ok!")
