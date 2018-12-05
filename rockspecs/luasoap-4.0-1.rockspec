@@ -3,7 +3,7 @@ version = "4.0-1"
 
 source = {
    url="https://github.com/tomasguisasola/luasoap/archive/v4_0.tar.gz",
-   md5="4a45c53b3b7788b365437f501bfddb8e",
+   md5="99f23ae426c91ef2a21ccbba03ca69b3",
    dir="luasoap-4_0",
 }
 
