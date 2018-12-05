@@ -9,7 +9,7 @@ local soap = require"soap"
 local strformat = require"string".format
 local tconcat = require"table".concat
 
-local qname_patt = "^%g*%:%g*$"
+local qname_patt = "^%w*%:%w*$"
 
 local M = {
 	_COPYRIGHT = "Copyright (C) 2015-2018 Kepler Project",
@@ -57,6 +57,10 @@ end
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 function M:gen_types ()
+	if not self.types then
+		return ''
+	end
+
 	local all_types = {
 		tag = "wsdl:types",
 		{
@@ -152,13 +156,13 @@ local function gen_portType (desc, method_name)
 	if desc.request then
 		op[ #op + 1] = {
 			tag = "wsdl:input",
-			attr = { message = ns..desc.request.name },
+			attr = { message = ns..assert (desc.request.name, "The field 'name' is mandatory when there is a request") },
 		}	
 	end
 	if desc.response then
 		op[ #op + 1] = {
 			tag = "wsdl:output",
-			attr = { message = ns..desc.response.name }, 
+			attr = { message = ns..assert (desc.response.name, "The field 'name' is mandatory when there is a response") }, 
 		}
 	end
 	if desc.fault then
@@ -201,13 +205,13 @@ local post_attr = {
 }
 
 local binding_tags = {
-	[1.1] = { tag = "soap:binding", attr = soap_attr, },
-	[1.2] = { tag = "wsoap12:binding", attr = soap_attr, },
+	["1.1"] = { tag = "soap:binding", attr = soap_attr, },
+	["1.2"] = { tag = "wsoap12:binding", attr = soap_attr, },
 	--["GET"] = { tag = "http:binding", attr = get_attr, },
 	--["POST"] = { tag = "http:binding", attr = post_attr, },
 }
-binding_tags["1.1"] = binding_tags[1.1]
-binding_tags["1.2"] = binding_tags[1.2]
+binding_tags[1.1] = binding_tags["1.1"]
+binding_tags[1.2] = binding_tags["1.2"]
 
 local function gen_binding_mode (mode, desc)
 	return binding_tags[mode]
@@ -215,13 +219,13 @@ end
 
 ------------------------------------------------------------------------------
 local operation_tags = {
-	[1.1] = { tag = "soap:operation", attr = { soapAction = "To be filled", style = "document"}, }, --TODO "rpc"
-	[1.2] = { tag = "wsoap12:operation", attr = { soapAction = "To be filled", style = "document"}, },
+	["1.1"] = { tag = "soap:operation", attr = { soapAction = "To be filled", style = "document"}, }, --TODO "rpc"
+	["1.2"] = { tag = "wsoap12:operation", attr = { soapAction = "To be filled", style = "document"}, },
 	--["GET"] = { tag = "http:operation", attr = {}, },
 	--["POST"] = { tag = "http:operation", attr = {}, },
 }
-operation_tags["1.1"] = operation_tags[1.1]
-operation_tags["1.2"] = operation_tags[1.2]
+operation_tags[1.1] = operation_tags["1.1"]
+operation_tags[1.2] = operation_tags["1.2"]
 
 local function gen_binding_operation (mode, url)
 	operation_tags[mode].attr.soapAction = url
@@ -302,6 +306,8 @@ end
 -- Generate bindings
 
 function M:gen_bindings ()
+	local tm = type (self.mode)
+	assert (tm == "table", "Unexpected 'mode' type: "..tm.." (expecting a table)")
 	local b = {}
 	for _, mode in ipairs(self.mode) do
 		for method_name, desc in pairs (self.methods) do
@@ -316,13 +322,13 @@ end
 ------------------------------------------------------------------------------
 
 local address_tags = {
-	[1.1] = "soap:address",
-	[1.2] = "wsoap12:address",
+	["1.1"] = "soap:address",
+	["1.2"] = "wsoap12:address",
 	--["GET"] = "http:address",
 	--["POST"] = "http:address",
 }
-address_tags["1.1"] = address_tags[1.1]
-address_tags["1.2"] = address_tags[1.2]
+address_tags[1.1] = address_tags["1.1"]
+address_tags[1.2] = address_tags["1.2"]
 
 local function gen_port (desc, url, mode)
 	local port = {
@@ -340,9 +346,11 @@ local function gen_port (desc, url, mode)
 end
 
 ------------------------------------------------------------------------------
---Generate service
+-- Generate service
 
 function M:gen_service ()
+	local tm = type (self.mode)
+	assert (tm == "table", "Unexpected 'mode' type: "..tm.." (expecting a table)")
 	local service = { 
 		tag = "wsdl:service",
 		attr = {
