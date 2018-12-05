@@ -55,9 +55,9 @@
 		</li>
 		<li><strong>Examples</strong>
             <ul>
-                <li><a href="#soap_elements_example">SOAP elements</a></li>
-                <li><a href="#escape_example">Escaping example</a></li>
-                <li><a href="#client_example">Client example</a></li>
+                <li><a href="examples.html#soap_elements_example">SOAP elements</a></li>
+                <li><a href="examples.html#escape_example">Escaping example</a></li>
+                <li><a href="examples.html#client_example">Client example</a></li>
             </ul>
         </li>
 		<li><a href="license.html">License</a></li>
@@ -118,7 +118,7 @@ Below is an example of a simple way of escaping strings that contain special cha
 <pre class="example">
 local escaped_element = {
 	tag = "StringEscapingTest",
-	{ tag = "string", "&lt;this was automatically escaped", },
+	{ tag = "string", "&lt;this was automatically escaped&gt;", },
 	{ tag = "string", 'do not re-escape my &amp;', },
 } --&gt; &lt;StringEscapingTest&gt;&lt;string&gt;&amp;lt;this was automatically escaped&amp;gt;&lt;/string&gt;&lt;string&gt;do not re-escape my &amp;amp;&lt;/string&gt;&lt;/StringEscapingTest&gt;
 </pre>

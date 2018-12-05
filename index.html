@@ -80,14 +80,14 @@ to handle XML documents.</p>
 
 <h2><a name="status"></a>Status</h2>
 
-<p>Current version is 3.0. It was developed for Lua 5.X.</p>
+<p>Current version is 4.0. It was developed for Lua 5.X, and tested on Linux (Ubuntu 14.04) with Lua 5.1, 5.2, 5.3 and LuaJIT 2.0.5 and 2.1.0-beta3.</p>
 
 
 <h2><a name="download"></a>Download</h2>
 
 <p>
 LuaSOAP can be downloaded in source code from its
-<a href="https://github.com/downloads/tomasguisasola/luasoap/luasoap-3.0.tar.gz">GitHub</a> page.
+<a href="https://github.com/tomasguisasola/luasoap/releases">GitHub</a> page.
 LuaSOAP can also be installed via <a href="http://luarocks.org">LuaRocks</a> with the following command line:
 </p>
 <code>luarocks install luasoap</code>
@@ -96,12 +96,22 @@ LuaSOAP can also be installed via <a href="http://luarocks.org">LuaRocks</a> wit
 <h2><a name="history"></a>History</h2>
 
 <dl class="history">
-    <dt><strong>LuaSOAP 3.0</strong> [13/Apr/2012]</dt>
+    <dt><strong>LuaSOAP 4.0</strong> [05/Dez/2018]</dt>
+    <dd>
+    <ul>
+        <li>Add support for the definition of headers</li>
+        <li>Add module to support generation of WSDL documents (thanks to Victor Dias)</li>
+        <li>Add support to http-digest authentication (thanks to Herbert Leuwer)</li>
+        <li>Convert all values to strings (using <code><a href="https://www.lua.org/manual/5.3/manual.html#pdf-tostring">tostring</a></code> when necessary)</li>
+    </ul>
+    </dd>
+
+    <dt><strong>LuaSOAP 3.0</strong> [21/Aug/2013]</dt>
     <dd>
     <ul>
         <li>Addition of <a href="manual.html#escaping">automatic escaping</a> of special characters (thanks to Seth Behunin)</li>
         <li>Bug correction: ignoring soap:Header while decoding soap message (thanks to Humberto Anjos)</li>
-        <li>Reimplementation to make it work in all Lua 5.X versions</li>
+        <li>Reimplementation to make it work in all Lua 5.X versions (tested with 5.0, 5.1 and 5.2)</li>
         <li>Removal of <code>soap.client.https</code> pseudo-module (see <a href="manual.html#https">HTTPS and SOAP over other transport layers</a>)</li>
     </ul>
     </dd>
