@@ -17,9 +17,6 @@ local M = {
 	_COPYRIGHT = "Copyright (C) 2004-2018 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 4.0 client",
-
-	-- Support for SOAP over HTTP is default and only depends on LuaSocket
-	http = require("socket.http"),
 }
 
 local xml_header_template = '<?xml version="1.0"?>'
@@ -60,6 +57,12 @@ function M.call(args)
 		assert(false, invalid_args..tostring(args.soapversion)..", "..tostring(args.soapaction))
 	end
 
+	if args.auth == "digest" then
+		M.http = require"http-digest"
+	else
+		M.http = require"socket.http"
+	end
+
 	local xml_header = xml_header_template
 	if args.encoding then
 		xml_header = xml_header:gsub('"%?>', '" encoding="'..args.encoding..'"?>')
@@ -89,9 +92,12 @@ function M.call(args)
 	local request = assert(mod.request, 'Could not find request function on module soap.client.'..protocol)
 
 	local one_or_nil, status_code, headers, receive_status = request(url)
-	local body = concat(tbody)
-	--assert(tonumber(status_code) == 200, "Error on request: "..tostring(one_or_nil or status_code).."\n\n"..tostring(body))
-	--if tonumber(status_code) ~= 200 then
+	local body
+	if args.auth == "digest" then
+		body = concat (tbody, '', 2)
+	else
+		body = concat(tbody)
+	end
 	if one_or_nil == nil then
 		local error_msg = "Error on response: "..tostring(status_code).."\n\n"..tostring(body)
 		local extra_info = {
