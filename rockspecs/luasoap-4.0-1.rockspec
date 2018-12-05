@@ -3,7 +3,7 @@ version = "4.0-1"
 
 source = {
    url="https://github.com/tomasguisasola/luasoap/archive/v4_0.tar.gz",
-   md5="",
+   md5="4a45c53b3b7788b365437f501bfddb8e",
    dir="luasoap-4_0",
 }
 
@@ -28,7 +28,7 @@ build = {
       ["soap.server"] = "src/server.lua",
       ["soap.client"] = "src/client.lua",
       ["soap.wsdl"] = "src/wsdl.lua",
-   }
+   },
    copy_directories = { "doc", "tests", },
 }
 
