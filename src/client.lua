@@ -3,7 +3,6 @@
 -- Default is over HTTP, but one can install other modules such as
 -- client.https to provide access via HTTPS.
 -- See Copyright notice in license.html
--- $Id: client.lua,v 1.3 2009/07/22 19:02:46 tomas Exp $
 ---------------------------------------------------------------------
 
 local assert, tonumber, tostring, pcall = assert, tonumber, tostring, pcall
