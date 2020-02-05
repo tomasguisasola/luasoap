@@ -154,7 +154,7 @@ end
 
 ------------------------------------------------------------------------------
 -- Create a new SOAP server
--- @param server_description Table with SOAP server description and configuration.
+-- @param server Table with SOAP server description and configuration.
 -- @return Table with server representation.
 
 function M.new (server)

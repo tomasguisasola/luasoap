@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
 -- LuaSOAP support to WSDL semi-automatic generation.
+
 -- See Copyright Notice in license.html
 ------------------------------------------------------------------------------
 
@@ -12,7 +13,7 @@ local tconcat = require"table".concat
 local qname_patt = "^%w*%:%w*$"
 
 local M = {
-	_COPYRIGHT = "Copyright (C) 2015-2018 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2015-2020 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 4.0 WSDL generation helping functions",
 }
@@ -38,6 +39,7 @@ local M = {
 --	bindingName -- string with binding name attribute
 
 ------------------------------------------------------------------------------
+-- Produce WSDL definitions tag.
 ------------------------------------------------------------------------------
 function M:gen_definitions ()
 	return strformat([[
@@ -55,6 +57,7 @@ function M:gen_definitions ()
 end
 
 ------------------------------------------------------------------------------
+-- Produce WSDL types tag.
 ------------------------------------------------------------------------------
 function M:gen_types ()
 	if not self.types then
@@ -78,14 +81,13 @@ function M:gen_types ()
 	return soap.serialize (all_types)
 end
 
------------------------------------------------------------------------------
------------------------------------------------------------------------------
--- Generate messages
+--=--------------------------------------------------------------------------
+-- Produce a message tag.
 -- generate one <wsdl:message> element with N <wsdl:part> elements inside it.
 -- @param elem Table with message description.
 -- @param method_name String with type of message ("request" or "response" or "fault").
 -- @return String with a <wsdl:message>.
-
+--=--------------------------------------------------------------------------
 local function gen_message (elem, method_name)
 	local message = {	
 		tag = "wsdl:message",
@@ -113,9 +115,10 @@ local function gen_message (elem, method_name)
 end
 
 ------------------------------------------------------------------------------
+-- Produce the message tags for each method: request, response, fault.
 -- generate two <wsdl:message> elements for each method.
 -- @return String with all <wsdl:message>s.
-
+------------------------------------------------------------------------------
 function M:gen_messages ()
 	local m = {}
 	for method_name, desc in pairs (self.methods) do
@@ -132,10 +135,11 @@ function M:gen_messages ()
 	return tconcat (m)
 end
 
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
--- generate portType
-
+--=---------------------------------------------------------------------------
+-- Produce portType tag.
+-- @param desc Table describing a method.
+-- @param method_name String with the method name.
+--=---------------------------------------------------------------------------
 local function gen_portType (desc, method_name)
 	local op = {
 		tag = "wsdl:operation",
@@ -179,8 +183,8 @@ local function gen_portType (desc, method_name)
 end
 
 ------------------------------------------------------------------------------
--- generate portTypes
-
+-- Produce the portType tags for each method.
+------------------------------------------------------------------------------
 function M:gen_portTypes ()
 	local p = {}
 	for method_name, desc in pairs (self.methods) do
@@ -189,8 +193,7 @@ function M:gen_portTypes ()
 	return tconcat (p)
 end
 
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
+--=---------------------------------------------------------------------------
 local soap_attr = {
 	transport = "http://schemas.xmlsoap.org/soap/http", -- Other URI may be used
 	style = "document", --TODO "rpc"
@@ -217,7 +220,7 @@ local function gen_binding_mode (mode, desc)
 	return binding_tags[mode]
 end
 
-------------------------------------------------------------------------------
+--=---------------------------------------------------------------------------
 local operation_tags = {
 	["1.1"] = { tag = "soap:operation", attr = { soapAction = "To be filled", style = "document"}, }, --TODO "rpc"
 	["1.2"] = { tag = "wsoap12:operation", attr = { soapAction = "To be filled", style = "document"}, },
@@ -232,7 +235,7 @@ local function gen_binding_operation (mode, url)
 	return operation_tags[mode]
 end
 
-------------------------------------------------------------------------------
+--=---------------------------------------------------------------------------
 local body_tags = {
 	[1.1] = { tag = "soap:body", attr = { use = "literal" }, },
 	[1.2] = { tag = "wsoap12:body", attr = { use = "literal" }, },
@@ -246,7 +249,7 @@ local function gen_binding_op_body (mode, desc)
 	return body_tags[mode]
 end
 
-------------------------------------------------------------------------------
+--=---------------------------------------------------------------------------
 local body_fault_tags = {
 	[1.1] = { tag = "soap:body", attr = { name = "To be filled", use = "literal" }, },
 	[1.2] = { tag = "wsoap12:body", attr = { name = "To be filled", use = "literal" }, },
@@ -261,7 +264,7 @@ local function gen_binding_op_body_fault (mode, desc)
 	return body_fault_tags[mode]
 end
 
-------------------------------------------------------------------------------
+--=---------------------------------------------------------------------------
 -- Generate binding
 
 local function gen_binding (desc, method_name, url, mode)
@@ -303,8 +306,9 @@ local function gen_binding (desc, method_name, url, mode)
 end
 
 ------------------------------------------------------------------------------
--- Generate bindings
-
+-- Produce the bindings for each method according to each mode.
+-- @return String.
+------------------------------------------------------------------------------
 function M:gen_bindings ()
 	local tm = type (self.mode)
 	assert (tm == "table", "Unexpected 'mode' type: "..tm.." (expecting a table)")
@@ -317,9 +321,8 @@ function M:gen_bindings ()
 	return tconcat (b)
 end
 
-------------------------------------------------------------------------------
+--=---------------------------------------------------------------------------
 -- Generate port
-------------------------------------------------------------------------------
 
 local address_tags = {
 	["1.1"] = "soap:address",
@@ -346,8 +349,8 @@ local function gen_port (desc, url, mode)
 end
 
 ------------------------------------------------------------------------------
--- Generate service
-
+-- Produce the service tag.
+------------------------------------------------------------------------------
 function M:gen_service ()
 	local tm = type (self.mode)
 	assert (tm == "table", "Unexpected 'mode' type: "..tm.." (expecting a table)")
@@ -366,6 +369,8 @@ function M:gen_service ()
 end
 
 ------------------------------------------------------------------------------
+-- Produce the WSDL document.
+-- @return String with the WSDL definition.
 ------------------------------------------------------------------------------
 function M:generate_wsdl ()
 	if self.wsdl then

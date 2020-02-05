@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------
 -- LuaSoap implementation for Lua.
+--
 -- See Copyright Notice in license.html
 ---------------------------------------------------------------------
 
@@ -228,9 +229,8 @@ end
 ---------------------------------------------------------------------
 local function decode (doc)
 	local obj = assert (parse (doc))
-	local ns = obj.tag:match ("^(.-):")
-	assert (obj.tag == ns..":Envelope", "Not a SOAP Envelope: "..
-		tostring(obj.tag))
+	assert (obj.tag, "Not an SOAP document")
+	local ns = assert (obj.tag:match ("^(.-):Envelope"), "Not a SOAP Envelope: "..obj.tag)
 	local lc = list_children (obj)
 	local o = lc ()
 	local headers = {}
@@ -254,11 +254,12 @@ local function decode (doc)
 	return namespace, method, entries, headers
 end
 
----------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- @export
 return {
-	_COPYRIGHT = "Copyright (C) 2004-2018 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2004-2020 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
-	_VERSION = "LuaSOAP 4.0",
+	_VERSION = "LuaSOAP 4.0.2",
 
 	decode = decode,
 	encode = encode,
