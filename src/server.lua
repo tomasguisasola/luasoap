@@ -13,7 +13,7 @@ local table = require"table"
 
 ------------------------------------------------------------------------------
 local M = {
-	_COPYRIGHT = "Copyright (C) 2004-2018 Kepler Project",
+	_COPYRIGHT = "Copyright (C) 2004-2020 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
 	_VERSION = "LuaSOAP 4.0 service helping functions",
 
