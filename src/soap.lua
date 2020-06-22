@@ -259,7 +259,7 @@ end
 return {
 	_COPYRIGHT = "Copyright (C) 2004-2020 Kepler Project",
 	_DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents",
-	_VERSION = "LuaSOAP 4.0",
+	_VERSION = "LuaSOAP 4.0.1",
 
 	decode = decode,
 	encode = encode,
