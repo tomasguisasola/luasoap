@@ -55,7 +55,10 @@ end
 ------------------------------------------------------------------------------
 function M:decodedata(doc)
 	local namespace, elem_name, elems = soap.decode(doc)
-	assert (self.methods[elem_name], "Unavailable method: `"..tostring(elem_name).."'")
+	assert (self.methods[elem_name], "Unavailable method: `"..tostring(elem_name).."'" ---[=[
+..'\n'..doc
+--]=]
+)
 	local func = self.methods[elem_name].method
 	assert (type (func) == "function", "Registered method is not a function: `"..tostring(elem_name).."'")
 
@@ -90,17 +93,17 @@ end
 ------------------------------------------------------------------------------
 function M:export(desc)
 	assert (getmetatable (self) == M, "Invalid argument #1: it must be a soap server (maybe you called this function with a dot (.), not with a colon (:))")
-	if desc.request then
-		desc.request.name = desc.request.name or (desc.name.."SoapIn")
-	end
+	--if desc.request then
+		--desc.request.name = desc.request.name or (desc.name.."SoapIn")
+	--end
 	if desc.response then
-		desc.response.name = desc.response.name or (desc.name.."SoapOut")
+		local respTag = desc.response.name or (desc.name.."Response")
 		local f = desc.method
 		desc.method = function (...) -- ( namespace, unpack(arguments) )
 			local res = { f(...) }
 			return soap.encode{
 				namespace = self.targetNamespace,
-				method = desc.response.name,
+				method = respTag,
 				entries = res,
 			}
 		end
@@ -109,8 +112,6 @@ function M:export(desc)
 		desc.fault.name = desc.fault.name or (desc.name.."SoapFault")
 	end
 	assert(desc.name, "A method must have a name!")
-	desc.portTypeName =  desc.portTypeName or (desc.name.."Soap")
-	desc.bindingName =  desc.bindingName or (desc.name.."Soap")
 	self.methods[desc.name] = desc
 end
 
@@ -166,6 +167,8 @@ function M.new (server)
     end
 	server.methods = {}
 	server.types = server.types or {}
+	server.bindingName = server.bindingName or server.name
+	server.portTypeName = server.portTypeName or server.name
 	if type(server.mode) ~= "table" then
 		server.mode = { server.mode or M.mode }
 	end
