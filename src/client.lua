@@ -45,6 +45,7 @@ local suggested_layers = {
 --	Table with SOAP elements (LuaExpat's format).
 ---------------------------------------------------------------------
 function M.call(args)
+	assert (args ~= M, "Invalid arguments for the call. Use '.' to call this funcion!")
 	local soap_action, content_type_header
 	if (not args.soapversion) or tonumber(args.soapversion) == 1.1 then
 		soap_action = '"'..assert(args.soapaction, mandatory_soapaction)..'"'
