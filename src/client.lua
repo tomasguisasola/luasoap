@@ -109,13 +109,14 @@ function M.call(args)
 		return nil, error_msg, extra_info
 	end
 
-	local ok, namespace, method, result = pcall(soap.decode, body)
+	local ok, namespace, method, result, soap_headers = pcall(soap.decode, body)
 	--assert(ok, "Error while decoding: "..tostring(namespace).."\n\n"..tostring(body))
 	if not ok then
 		local error_msg = "Error while decoding: "..tostring(namespace).."\n\n"..tostring(body)
 		local extra_info = {
 			http_status_code = status_code,
 			http_response_headers = headers,
+			soap_response_headers = soap_headers,
 			receive_status = receive_status,
 			body = body,
 			decoding_error = namespace, -- this is pcall's error
@@ -125,7 +126,7 @@ function M.call(args)
 		return nil, error_msg, extra_info
 	end
 
-	return namespace, method, result
+	return namespace, method, result, soap_headers, body
 end
 
 ---------------------------------------------------------------------
